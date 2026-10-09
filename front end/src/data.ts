@@ -20,6 +20,7 @@ export type Message = {
   key?: "chatHello" | "chatReply";
   plan?: boolean;
   localPlan?: import("./api").Plan;
+  planRequest?: import("./api").Interpretation;
 };
 export const groceries: GroceryItem[] = [
   {
