@@ -11,6 +11,8 @@ def test_parser_uses_dashboard_constraints_and_explicit_overrides():
     explicit = rule_assisted_taglish_fallback("200 pesos for 3 people", {"budget_php": 150, "servings": 2})
     assert explicit.budget_php == 200
     assert explicit.servings == 3
+    word_budget = rule_assisted_taglish_fallback("tatlong daan pesos for 3 people", {"budget_php": 150, "servings": 2})
+    assert word_budget.budget_php == 300
 
 
 def test_frontend_plan_recipe_pantry_and_price_contract():
