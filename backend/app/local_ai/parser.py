@@ -21,8 +21,9 @@ def parse_and_validate_llm_json(raw_text: str) -> Optional[AgentInterpretRespons
         return None
 
 
-def rule_assisted_taglish_fallback(message: str) -> AgentInterpretResponse:
+def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[Dict[str, Any]] = None) -> AgentInterpretResponse:
     msg = message.lower()
+    constraints = existing_constraints or {}
 
     intent: AllowedIntent = "plan_meal"
     if any(k in msg for k in ["presyo", "price", "magkano", "per kilo", "kada kilo"]):
@@ -70,7 +71,10 @@ def rule_assisted_taglish_fallback(message: str) -> AgentInterpretResponse:
                 except ValueError:
                     pass
 
-    servings: int = 4
+    if budget_php is None:
+        budget_php = constraints.get("budget_php")
+
+    servings: int = constraints.get("servings") or 4
     servings_patterns = [
         r"(?:ng|para sa|good for|for)\s*(\d+)\s*(?:tao|person|persons|people|pax)?",
         r"(?:dalawa|tatlo|apat|lima|anim|pito|walo|siyam|sampu)\s*(?:kami|tao)?",
