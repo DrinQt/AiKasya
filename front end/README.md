@@ -75,7 +75,7 @@ Official originals were copied from the supplied `logo.png` and `mascot.png`. Ba
 
 ## Local backend integration
 
-Run the backend and frontend in separate terminals from the repository root.
+After the first-time dependency setup below, `npm.cmd run dev` from either the repository root or `front end` starts both services together. You can also start the backend separately using the commands below; the development launcher reuses it. Use `npm.cmd run dev:frontend` for frontend-only development.
 
 Backend (PowerShell):
 
