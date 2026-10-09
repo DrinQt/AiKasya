@@ -12,6 +12,7 @@ import {
   type MealOption,
   type Recipe,
 } from "../api";
+import { closestMeal, planReply } from "../chatPresentation";
 import { Send } from "lucide-react";
 import { BrandImage, PlanSummary, type T } from "../components";
 import type { State } from "../state";
@@ -37,7 +38,7 @@ export default function AIChat({
   }, []);
   const [detailError, setDetailError] = useState("");
   const [pending, setPending] = useState(false);
-  const send = async (prompt = draft) => {
+  const send = async (prompt = draft, constraints?: Interpretation) => {
     const text = prompt.trim();
     if (!text || pending) return;
     const userId = crypto.randomUUID();
@@ -49,13 +50,15 @@ export default function AIChat({
     setPending(true);
     let reply: import("../data").Message;
     try {
-      const interpreted = await api<Interpretation>("/agent/interpret", {
-        message: text,
-        existing_constraints: {
-          budget_php: state.budget / state.days,
-          servings: state.people,
-        },
-      });
+      const interpreted =
+        constraints ??
+        (await api<Interpretation>("/agent/interpret", {
+          message: text,
+          existing_constraints: {
+            budget_php: state.budget / state.days,
+            servings: state.people,
+          },
+        }));
       if (interpreted.clarification_question) {
         reply = {
           id: crypto.randomUUID(),
@@ -80,12 +83,12 @@ export default function AIChat({
         reply = {
           id: crypto.randomUUID(),
           role: "assistant",
-          text: [
-            interpreted.confidence_note,
-            ...result.warnings,
-            result.plan.reason_if_no_match ??
-              "Choose from these locally calculated meal options.",
-          ].join("\n"),
+          text: planReply(result.plan, state.language),
+          planRequest: {
+            ...interpreted,
+            budget_php: result.plan.budget_php,
+            servings: interpreted.servings ?? state.people,
+          },
           localPlan: result.plan,
         };
       }
@@ -113,8 +116,8 @@ export default function AIChat({
     <main className="chat-screen">
       <p className="demo-label">
         {state.language === "fil"
-          ? "Lokal na AI at pagkalkula ng badyet"
-          : "Local AI interpretation and budget calculations"}
+          ? "Kaagapay sa badyet sa pagkain"
+          : "Your meal budget buddy"}
       </p>
       <div className="chat-messages" role="log" aria-live="polite">
         {!state.messages.length && <p className="subtext">{t("noMessages")}</p>}
@@ -123,9 +126,69 @@ export default function AIChat({
             {message.role === "assistant" && <BrandImage kind="mascot" />}
             <div className="message-body">
               <p className="bubble">
-                {message.key ? t(message.key) : message.text}
+                {message.localPlan
+                  ? planReply(message.localPlan, state.language)
+                  : message.key
+                    ? t(message.key)
+                    : message.text}
               </p>
-              {message.localPlan && (
+              {message.localPlan && !message.localPlan.options.length && (
+                <div className="reply-suggestions">
+                  {closestMeal(message.localPlan) && (
+                    <button
+                      className="chat-suggestion"
+                      disabled={pending}
+                      onClick={() => {
+                        const closest = closestMeal(message.localPlan!)!;
+                        const request = message.planRequest;
+                        const prompt = `${closest.cost} pesos for ${request?.servings ?? state.people} people`;
+                        void send(
+                          prompt,
+                          request
+                            ? {
+                                ...request,
+                                budget_php: closest.cost,
+                                clarification_question: null,
+                              }
+                            : undefined,
+                        );
+                      }}
+                    >
+                      {state.language === "fil" ? "Gamitin ang" : "Use"} PHP{" "}
+                      {closestMeal(message.localPlan)!.cost}{" "}
+                      {state.language === "fil" ? "na badyet" : "budget"}
+                    </button>
+                  )}
+                  {(message.planRequest?.servings ?? state.people) > 1 && (
+                    <button
+                      className="chat-suggestion"
+                      disabled={pending}
+                      onClick={() => {
+                        const request = message.planRequest;
+                        const servings = Math.max(
+                          1,
+                          (request?.servings ?? state.people) - 1,
+                        );
+                        void send(
+                          `${message.localPlan!.budget_php} pesos for ${servings} people`,
+                          request
+                            ? {
+                                ...request,
+                                servings,
+                                clarification_question: null,
+                              }
+                            : undefined,
+                        );
+                      }}
+                    >
+                      {state.language === "fil"
+                        ? "Bawasan ang tao"
+                        : "Try fewer people"}
+                    </button>
+                  )}
+                </div>
+              )}
+              {message.localPlan && message.localPlan.options.length > 0 && (
                 <div className="plan-summary">
                   {message.localPlan.options.map((option) => (
                     <div key={option.recipe_id}>
