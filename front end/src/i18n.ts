@@ -84,7 +84,7 @@ export const en = {
   helpText:
     "Set your budget, choose a meal plan, then check your pantry before shopping. Your changes are saved on this device.",
   aboutText:
-    "AiKasya helps households plan food spending. This frontend demo uses sample meals and mock chat responses.",
+    "AiKasya helps households plan food spending using a local backend for meal costs and chat interpretation. Sample plans are labeled when the service is unavailable.",
   supportText:
     "Thanks for supporting AiKasya! Donation features are planned for a future release.",
   purchased: "Purchased",
@@ -205,7 +205,7 @@ export const fil: Record<TranslationKey, string> = {
   helpText:
     "Itakda ang badyet, pumili ng meal plan, at tingnan muna ang mga sangkap bago mamili. Naka-save ang mga pagbabago sa device na ito.",
   aboutText:
-    "Tinutulungan ng AiKasya ang mga pamilya na magplano ng gastos sa pagkain. Gumagamit ang demo ng halimbawang pagkain at sagot sa chat.",
+    "Tinutulungan ng AiKasya ang mga pamilya na magplano ng pagkain gamit ang lokal na backend para sa gastos at chat. May malinaw na label ang halimbawang plano kapag hindi available ang serbisyo.",
   supportText:
     "Salamat sa suporta sa AiKasya! Darating ang donation features sa susunod na bersyon.",
   purchased: "Nabili",
