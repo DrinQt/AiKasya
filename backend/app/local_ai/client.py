@@ -65,4 +65,4 @@ async def interpret_user_request(
     except Exception:
         pass
 
-    return rule_assisted_taglish_fallback(message)
+    return rule_assisted_taglish_fallback(message, existing_constraints)
