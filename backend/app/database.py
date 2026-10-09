@@ -232,7 +232,7 @@ def get_latest_prices_map() -> Dict[str, Dict[str, Any]]:
         SELECT p.*, i.canonical_name 
         FROM prices p
         JOIN ingredients i ON p.ingredient_id = i.ingredient_id
-        ORDER BY p.observed_at DESC
+        ORDER BY p.observed_at DESC, p.rowid DESC
     """)
     rows = cursor.fetchall()
     prices_map = {}
@@ -270,7 +270,7 @@ def upsert_price_db(
 
     base_qty, base_unit = normalize_unit_and_quantity(quantity, unit)
     norm_price = (amount_php / base_qty) if base_qty > 0 else 0.0
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     price_id = f"pr-{uuid.uuid4().hex[:8]}"
 
     cursor.execute(
