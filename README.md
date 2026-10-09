@@ -13,13 +13,29 @@ npm install
 npm run dev
 ```
 
-## Verify the frontend
+## Run the backend & Local AI
 
-Run these commands inside `front end`:
+```sh
+cd backend
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
 
+Interactive API Docs: http://127.0.0.1:8000/docs
+
+## Verify the project
+
+### Frontend (inside `front end`):
 ```sh
 npm run build
 npm test
 ```
 
-See [the frontend README](front%20end/README.md) for features, offline support, and additional setup instructions.
+### Backend:
+```sh
+pytest -v
+```
+
+See [the frontend README](front%20end/README.md) and [the backend README](backend/README.md) for full architecture details.
