@@ -1,6 +1,12 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Trash2, X } from "lucide-react";
-import { BrandImage, BottomNav, Header, type Screen, type T } from "./components";
+import {
+  BrandImage,
+  BottomNav,
+  Header,
+  type Screen,
+  type T,
+} from "./components";
 import { en, fil, type TranslationKey } from "./i18n";
 import { useAppState } from "./state";
 import { groceries, recipes } from "./data";
@@ -8,7 +14,9 @@ import Welcome from "./screens/Welcome";
 import Home from "./screens/Home";
 import BudgetSetup from "./screens/BudgetSetup";
 import AIChat from "./screens/AIChat";
-import MealPlanner from "./screens/MealPlanner";
+import ConnectedMeals from "./screens/ConnectedMeals";
+import ConnectedRecipe from "./screens/ConnectedRecipe";
+import type { MealOption, Recipe } from "./api";
 import RecipeDetails from "./screens/RecipeDetails";
 import GroceryList from "./screens/GroceryList";
 import Pantry from "./screens/Pantry";
@@ -54,6 +62,10 @@ export default function App() {
   const [chatOpen, setChatOpen] = useState(false);
   const chatLauncher = useRef<HTMLButtonElement>(null);
   const [online, setOnline] = useState(navigator.onLine);
+  const [backendRecipe, setBackendRecipe] = useState<{
+    recipe: Recipe;
+    option: MealOption;
+  } | null>(null);
   const [recipeId, setRecipeId] = useState("adobo");
   const [notice, setNotice] = useState<TranslationKey | null>(null);
   const t: T = (key) => (state.language === "fil" ? fil : en)[key];
@@ -100,7 +112,10 @@ export default function App() {
     const close = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setChatOpen(false);
-        (chatLauncher.current ?? document.querySelector<HTMLButtonElement>(".greeting-mascot"))?.focus();
+        (
+          chatLauncher.current ??
+          document.querySelector<HTMLButtonElement>(".greeting-mascot")
+        )?.focus();
       }
     };
     window.addEventListener("keydown", close);
@@ -118,6 +133,29 @@ export default function App() {
               !s.groceries.some((existing) => existing.id === item.id),
           )
           .map((item) => ({ ...item, checked: false })),
+      ],
+    }));
+    setNotice("added");
+    navigate("grocery");
+  };
+  const addBackendGroceries = (option: MealOption) => {
+    setState((s) => ({
+      ...s,
+      groceries: [
+        ...s.groceries.filter(
+          (item) =>
+            !option.items_to_buy.some(
+              (purchase) => purchase.ingredient_id === item.id,
+            ),
+        ),
+        ...option.items_to_buy.map((item) => ({
+          id: item.ingredient_id,
+          name: item.name,
+          fil: item.name,
+          quantity: `${item.quantity} ${item.unit}`,
+          price: item.cost_php,
+          checked: false,
+        })),
       ],
     }));
     setNotice("added");
@@ -151,9 +189,11 @@ export default function App() {
         <Home
           state={state}
           t={t}
-          onChat={() => setChatOpen(open => !open)}
+          onChat={() => setChatOpen((open) => !open)}
           chatOpen={chatOpen}
-          onHouseholdChange={(field, value) => setState(s => ({ ...s, [field]: value }))}
+          onHouseholdChange={(field, value) =>
+            setState((s) => ({ ...s, [field]: value }))
+          }
           online={online}
           money={money}
           navigate={navigate}
@@ -178,27 +218,46 @@ export default function App() {
           state={state}
           setState={setState}
           t={t}
-          onDetails={() => navigate("meals")}
+          onDetails={(recipe, option) => {
+            if (recipe && option) {
+              setBackendRecipe({ recipe, option });
+              navigate("recipe");
+            } else navigate("meals");
+          }}
         />
       );
       break;
     case "meals":
       content = (
-        <MealPlanner
+        <ConnectedMeals
           state={state}
           t={t}
           money={money}
           onSetup={() => navigate("budget")}
-          onRecipe={(id) => {
+          onRecipe={(recipe, option) => {
+            setBackendRecipe(recipe.steps ? { recipe, option } : null);
+            setRecipeId(recipe.recipe_id);
+            navigate("recipe");
+          }}
+          onAdd={addBackendGroceries}
+          onSampleAdd={addPlan}
+          onSampleRecipe={(id) => {
+            setBackendRecipe(null);
             setRecipeId(id);
             navigate("recipe");
           }}
-          onAdd={addPlan}
         />
       );
       break;
     case "recipe":
-      content = (
+      content = backendRecipe ? (
+        <ConnectedRecipe
+          recipe={backendRecipe.recipe}
+          option={backendRecipe.option}
+          t={t}
+          onAdd={() => addBackendGroceries(backendRecipe.option)}
+        />
+      ) : (
         <RecipeDetails
           recipeId={recipeId}
           language={state.language}
@@ -255,7 +314,9 @@ export default function App() {
       break;
   }
   return (
-    <div className={`app-shell ${screen === "welcome" ? "is-welcome" : screen === "home" ? "is-home" : ""}`}>
+    <div
+      className={`app-shell ${screen === "welcome" ? "is-welcome" : screen === "home" ? "is-home" : ""}`}
+    >
       {storageError && (
         <p className="notice" role="status">
           {t("storageError")}
@@ -296,20 +357,68 @@ export default function App() {
       {screen !== "welcome" && screen !== "chat" && (
         <>
           {chatOpen && (
-            <section className="floating-chat" role="dialog" aria-label={t("chat")} id="mascot-chat">
+            <section
+              className="floating-chat"
+              role="dialog"
+              aria-label={t("chat")}
+              id="mascot-chat"
+            >
               <header className="floating-chat-header">
                 <BrandImage kind="mascot" />
                 <h2>{t("chat")}</h2>
-                <button className="icon-button" aria-label={t("clearChat")} onClick={() => setState(s => ({ ...s, messages: [] }))}><Trash2 size={18} /></button>
-                <button className="icon-button" aria-label={state.language === "fil" ? "Isara ang chat" : "Close chat"} onClick={() => { setChatOpen(false); (chatLauncher.current ?? document.querySelector<HTMLButtonElement>(".greeting-mascot"))?.focus(); }}><X size={20} /></button>
+                <button
+                  className="icon-button"
+                  aria-label={t("clearChat")}
+                  onClick={() => setState((s) => ({ ...s, messages: [] }))}
+                >
+                  <Trash2 size={18} />
+                </button>
+                <button
+                  className="icon-button"
+                  aria-label={
+                    state.language === "fil" ? "Isara ang chat" : "Close chat"
+                  }
+                  onClick={() => {
+                    setChatOpen(false);
+                    (
+                      chatLauncher.current ??
+                      document.querySelector<HTMLButtonElement>(
+                        ".greeting-mascot",
+                      )
+                    )?.focus();
+                  }}
+                >
+                  <X size={20} />
+                </button>
               </header>
-              <AIChat state={state} setState={setState} t={t} onDetails={() => navigate("meals")} />
+              <AIChat
+                state={state}
+                setState={setState}
+                t={t}
+                onDetails={(recipe, option) => {
+                  if (recipe && option) {
+                    setBackendRecipe({ recipe, option });
+                    navigate("recipe");
+                  } else navigate("meals");
+                }}
+              />
             </section>
           )}
-          {screen !== "home" && <button ref={chatLauncher} className={`mascot-launcher ${chatOpen ? "is-open" : ""}`} aria-label={t("chat")} aria-expanded={chatOpen} aria-controls="mascot-chat" onClick={() => setChatOpen(open => !open)}>
-            <span className="mascot-head"><BrandImage kind="mascot" /></span>
-            <span className="mascot-online" aria-hidden="true" />
-          </button>}
+          {screen !== "home" && (
+            <button
+              ref={chatLauncher}
+              className={`mascot-launcher ${chatOpen ? "is-open" : ""}`}
+              aria-label={t("chat")}
+              aria-expanded={chatOpen}
+              aria-controls="mascot-chat"
+              onClick={() => setChatOpen((open) => !open)}
+            >
+              <span className="mascot-head">
+                <BrandImage kind="mascot" />
+              </span>
+              <span className="mascot-online" aria-hidden="true" />
+            </button>
+          )}
         </>
       )}
       {notice && (
