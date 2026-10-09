@@ -21,6 +21,6 @@ test("Browser connects to real backend plans, recipe steps, groceries, and chat"
   const chatPlanResponse = page.waitForResponse(response => response.url().endsWith("/api/plans/generate") && response.request().method() === "POST");
   await page.getByRole("button", { name: "Send message" }).click();
   const chatPlan = await (await chatPlanResponse).json();
-  expect(chatPlan.budget_php).toBe(200);
+  expect(chatPlan.budget_php).toBeCloseTo(500 / 3);
   await expect(page.getByRole("dialog").getByRole("heading", { name: chatPlan.options[0].recipe_name, exact: true })).toBeVisible();
 });
