@@ -4,6 +4,8 @@ Offline-first food budgeting and meal planning frontend built with React, Vite, 
 
 ## Run
 
+Run the following commands from the `front end` folder.
+
 ```sh
 npm install
 npm run dev
