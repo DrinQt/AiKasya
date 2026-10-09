@@ -108,7 +108,7 @@ test("Local planner uses household constraints, opens real instructions, and add
   ).toBeVisible();
   await expect(page.getByText("₱42", { exact: true })).toBeVisible();
 });
-test("Chat uses Home constraints even when interpretation supplies a different budget", async ({
+test("Chat uses shared settings rather than unrelated interpretation defaults", async ({
   page,
 }) => {
   await mockBackend(page);
@@ -116,9 +116,7 @@ test("Chat uses Home constraints even when interpretation supplies a different b
   const request = page.waitForRequest((request) =>
     request.url().endsWith("/api/plans/generate"),
   );
-  await page
-    .getByRole("textbox")
-    .fill("Plan dinner for 150 pesos for 3 people");
+  await page.getByRole("textbox").fill("Plan dinner");
   await page.getByRole("button", { name: "Send message" }).click();
   expect((await request).postDataJSON().budget_php).toBeCloseTo(500 / 3);
   await expect(page.getByRole("heading", { name: "Egg meal" })).toBeVisible();
@@ -241,13 +239,50 @@ test("Chat gives a concise budget shortfall and a working budget suggestion", as
   ).toBeVisible();
 });
 
-test("Updated Home people and days are used in the next chat request", async ({ page }) => {
+test("Updated Home people and days are used in the next chat request", async ({
+  page,
+}) => {
   await mockBackend(page);
-  await page.getByRole("combobox", { name: "Household size" }).selectOption("2");
-  await page.getByRole("combobox", { name: "Number of days" }).selectOption("2");
+  await page
+    .getByRole("combobox", { name: "Household size" })
+    .selectOption("2");
+  await page
+    .getByRole("combobox", { name: "Number of days" })
+    .selectOption("2");
   await page.getByRole("button", { name: "AI Chat", exact: true }).click();
-  await page.getByRole("textbox").fill("100 pesos for 8 people");
-  const request = page.waitForRequest(request => request.url().endsWith("/api/plans/generate"));
+  await page.getByRole("textbox").fill("Plan dinner");
+  const request = page.waitForRequest((request) =>
+    request.url().endsWith("/api/plans/generate"),
+  );
   await page.getByRole("button", { name: "Send message" }).click();
-  expect((await request).postDataJSON()).toMatchObject({ budget_php: 250, servings: 2 });
+  expect((await request).postDataJSON()).toMatchObject({
+    budget_php: 250,
+    servings: 2,
+  });
+});
+test("Typed budget and days update Home before calculating chat meals", async ({
+  page,
+}) => {
+  await mockBackend(page);
+  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await page.getByRole("textbox").fill("500 budget 1 day");
+  const request = page.waitForRequest((request) =>
+    request.url().endsWith("/api/plans/generate"),
+  );
+  await page.getByRole("button", { name: "Send message" }).click();
+  expect((await request).postDataJSON()).toMatchObject({
+    budget_php: 500,
+    servings: 3,
+  });
+  await expect(
+    page.getByText("PHP 500 per day", { exact: false }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "Close chat" }).click();
+  await expect(
+    page.getByRole("combobox", { name: "Number of days" }),
+  ).toHaveValue("1");
+  await page.reload();
+  await expect(
+    page.getByRole("combobox", { name: "Number of days" }),
+  ).toHaveValue("1");
 });
