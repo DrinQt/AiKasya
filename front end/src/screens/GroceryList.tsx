@@ -1,4 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
+import { savePrices } from "../api";
 import { Lightbulb, Pencil, Check, ShoppingBasket } from "lucide-react";
 import { Button, type T } from "../components";
 import type { State } from "../state";
@@ -17,6 +18,8 @@ export default function GroceryList({
   market?: boolean;
   onMarket: () => void;
 }) {
+  const [syncing, setSyncing] = useState(false);
+  const [syncNotice, setSyncNotice] = useState("");
   const [editing, setEditing] = useState(market);
   const total = state.groceries.reduce((sum, item) => sum + item.price, 0),
     purchased = state.groceries
@@ -113,6 +116,28 @@ export default function GroceryList({
         {editing ? <Check /> : <Pencil />}
         {t(editing ? "done" : "editPrices")}
       </Button>
+      <Button
+        disabled={syncing}
+        onClick={() => {
+          setSyncing(true);
+          setSyncNotice("");
+          void savePrices(state)
+            .then((result) =>
+              setSyncNotice(
+                `Saved ${result.saved} prices to the local backend. ${result.skipped} items skipped because their ingredient, quantity, unit, or price needs correction.`,
+              ),
+            )
+            .catch(() =>
+              setSyncNotice(
+                "Could not save prices to the local backend. Device prices are still saved; retry when the service is available.",
+              ),
+            )
+            .finally(() => setSyncing(false));
+        }}
+      >
+        Save prices to backend
+      </Button>
+      {syncNotice && <p role="status">{syncNotice}</p>}
       {market ? (
         <p className="subtext">{t("marketLater")}</p>
       ) : (
