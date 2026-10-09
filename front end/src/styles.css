@@ -1464,3 +1464,4 @@ button:focus-visible, input:focus-visible { outline: 3px solid #e7a522; outline-
 .is-home .floating-chat { bottom: calc(94px + env(safe-area-inset-bottom)); height: min(510px, calc(100dvh - 114px)); }
 @media (min-width: 600px) { .is-home .floating-chat { bottom: 118px; height: min(510px, calc(100dvh - 138px)); } }
 @media (prefers-reduced-motion: reduce) { .greeting-mascot img { animation: none; } }
+.backend-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
