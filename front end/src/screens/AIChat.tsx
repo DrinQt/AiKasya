@@ -41,16 +41,27 @@ export default function AIChat({
   const send = async (prompt = draft, constraints?: Interpretation) => {
     const text = prompt.trim();
     if (!text || pending) return;
+    // Suggestion buttons change the shared Home settings; ordinary chat uses them.
+    const planningState = constraints
+      ? {
+          ...state,
+          budget:
+            (constraints.budget_php ?? state.budget / state.days) * state.days,
+          people: constraints.servings ?? state.people,
+        }
+      : state;
     const userId = crypto.randomUUID();
     setState((s) => ({
       ...s,
+      budget: planningState.budget,
+      people: planningState.people,
       messages: [...s.messages, { id: userId, role: "user", text }],
     }));
     setDraft("");
     setPending(true);
     let reply: import("../data").Message;
     try {
-      const interpreted =
+      const parsed =
         constraints ??
         (await api<Interpretation>("/agent/interpret", {
           message: text,
@@ -59,6 +70,17 @@ export default function AIChat({
             servings: state.people,
           },
         }));
+      const interpreted = {
+        ...parsed,
+        budget_php: planningState.budget / planningState.days,
+        servings: planningState.people,
+        clarification_question:
+          parsed.clarification_question &&
+          !parsed.clarification_question.toLowerCase().includes("budget") &&
+          !parsed.clarification_question.toLowerCase().includes("badyet")
+            ? parsed.clarification_question
+            : null,
+      };
       if (interpreted.clarification_question) {
         reply = {
           id: crypto.randomUUID(),
@@ -76,8 +98,8 @@ export default function AIChat({
         };
       } else {
         const result = await generatePlan(
-          state,
-          interpreted.budget_php ?? state.budget / state.days,
+          planningState,
+          planningState.budget / planningState.days,
           interpreted,
         );
         reply = {
@@ -118,6 +140,13 @@ export default function AIChat({
         {state.language === "fil"
           ? "Kaagapay sa badyet sa pagkain"
           : "Your meal budget buddy"}
+      </p>
+      <p className="demo-label" role="status">
+        PHP {state.budget} · {state.people} {t("people")} · {state.days}{" "}
+        {t("days")}
+        <br />
+        PHP {Number((state.budget / state.days).toFixed(2))}{" "}
+        {state.language === "fil" ? "bawat araw" : "per day"}
       </p>
       <div className="chat-messages" role="log" aria-live="polite">
         {!state.messages.length && <p className="subtext">{t("noMessages")}</p>}
@@ -242,9 +271,17 @@ export default function AIChat({
         <button
           className="chat-suggestion"
           disabled={pending}
-          onClick={() => void send(t("chatPrompt"))}
+          onClick={() =>
+            void send(
+              state.language === "fil"
+                ? "Magplano ng pagkain gamit ang aking badyet"
+                : "Plan meals using my Home settings",
+            )
+          }
         >
-          {t("chatPrompt")}
+          {state.language === "fil"
+            ? "Gamitin ang aking badyet"
+            : "Plan with my settings"}
         </button>
         <button
           className="chat-suggestion"
