@@ -3,7 +3,7 @@
 AiKasya's repository keeps frontend and backend work separate.
 
 - `front end/` contains the React, TypeScript, and Vite app, its assets, configuration, and browser tests.
-- Backend teammates can add their service in a separate top-level folder such as `backend/`.
+- `backend/` contains the FastAPI service, local AI interpreter, optimizer, and SQLite data.
 
 ## Run the frontend
 
@@ -38,4 +38,9 @@ npm test
 pytest -v
 ```
 
-See [the frontend README](front%20end/README.md) and [the backend README](backend/README.md) for full architecture details.
+See [the frontend README](front%20end/README.md) and [the backend README](backend/README.md) for full architecture details.
+## Connected frontend and backend
+
+The frontend now calls the local backend for chat interpretation, budget-constrained meal options, recipe details, pantry synchronization, and user-entered prices. Start the backend on port 8000 and the frontend on port 5173 in separate terminals; see [the frontend integration instructions](front%20end/README.md#local-backend-integration).
+
+The planner divides the saved budget by Days and requests single-meal alternatives for the selected People count. Sample plans are explicitly labeled when the backend is unavailable. Pantry and price synchronization use the visible save/load controls; there are no cloud AI calls in this integration.
