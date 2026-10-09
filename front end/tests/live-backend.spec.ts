@@ -17,10 +17,10 @@ test("Browser connects to real backend plans, recipe steps, groceries, and chat"
   const item = option.items_to_buy[0];
   await expect(page.getByRole("checkbox", { name: `${item.name} (${item.quantity} ${item.unit})`, exact: true })).toBeVisible();
   await page.getByRole("button", { name: "AI Chat", exact: true }).click();
-  await page.getByRole("textbox").fill("200 pesos for 3 people");
+  await page.getByRole("textbox").fill("600 pesos for 3 people");
   const chatPlanResponse = page.waitForResponse(response => response.url().endsWith("/api/plans/generate") && response.request().method() === "POST");
   await page.getByRole("button", { name: "Send message" }).click();
   const chatPlan = await (await chatPlanResponse).json();
-  expect(chatPlan.budget_php).toBeCloseTo(500 / 3);
+  expect(chatPlan.budget_php).toBeCloseTo(600 / 3);
   await expect(page.getByRole("dialog").getByRole("heading", { name: chatPlan.options[0].recipe_name, exact: true })).toBeVisible();
 });
