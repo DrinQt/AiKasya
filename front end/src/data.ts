@@ -19,6 +19,7 @@ export type Message = {
   text?: string;
   key?: "chatHello" | "chatReply";
   plan?: boolean;
+  localPlan?: import("./api").Plan;
 };
 export const groceries: GroceryItem[] = [
   {
