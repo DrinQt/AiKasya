@@ -51,6 +51,11 @@ async def interpret_user_request(
                 raw_response = resp.json().get("response", "")
                 parsed = parse_and_validate_llm_json(raw_response)
                 if parsed:
+                    if parsed.budget_php is None:
+                        fb = rule_assisted_taglish_fallback(message)
+                        if fb.budget_php is not None:
+                            parsed.budget_php = fb.budget_php
+
                     if parsed.budget_php is not None:
                         parsed.missing_required_fields = [f for f in parsed.missing_required_fields if f != "budget_php"]
                         if not parsed.missing_required_fields:
