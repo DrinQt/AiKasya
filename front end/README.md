@@ -96,7 +96,7 @@ npm run dev
 
 The frontend calls `http://127.0.0.1:8000/api` by default. Set `VITE_API_BASE_URL` in a local `.env.local` file to change the backend address, then restart Vite. For a phone accessing another computer's backend, use that computer's reachable address; localhost refers to the phone itself. The backend must remain running for calculated plans and chat even when the internet is disconnected.
 
-People controls recipe servings; Days divides the saved budget into a daily allowance. The backend currently returns alternatives for a single meal and does not build a complete multi-day menu. Chat uses an explicit budget from the message when provided. Selecting a chat result opens that exact recipe without regenerating it under different constraints.
+People controls recipe servings; Days divides the saved budget into a daily allowance. The backend currently returns alternatives for a single meal and does not build a complete multi-day menu. Chat uses the same Home budget divided by Days and the same People count, even when a message mentions different amounts. Use Home to edit those values, or tap a suggested budget or fewer-people action to update the shared settings. Selecting a chat result opens that exact recipe without regenerating it under different constraints.
 
 Pantry edits save on the device. Use **Save pantry to backend** to synchronize the complete device pantry, or **Load backend pantry** to replace it with the backend stock. Quantities must use compatible units, such as `500 g`, `1 kg`, `250 ml`, or `3 pcs`; unknown ingredients, duplicate ingredients, and incompatible units require correction before saving. The planner uses the current device pantry and reports entries it cannot count.
 
