@@ -179,3 +179,22 @@ test("Pantry loads backend stock and grocery prices are normalized with their ac
     source_type: "user_entered",
   });
 });
+
+test("Chat gives a concise budget shortfall and a working budget suggestion", async ({ page }) => {
+  await mockBackend(page);
+  await page.route("**/api/agent/interpret", route => route.fulfill({ json: { intent: "plan_meal", budget_php: 100, servings: 3, meal_type: "dinner", excluded_ingredients: [], max_prep_minutes: null, clarification_question: null, confidence_note: "Interpreted on-device via local parser; verified local execution." }, headers: { "Access-Control-Allow-Origin": "*" } }));
+  let attempts = 0;
+  await page.route("**/api/plans/generate", route => {
+    attempts++;
+    return route.fulfill({ json: attempts === 1 ? { status: "no_match", budget_php: 100, options: [], reason_if_no_match: "No recipe in the local library meets all constraints within ₱100.00. The closest meal was 'Tortang Talong' needing an estimated ₱107.00 (₱7.00 over budget). Try increasing budget." } : plan, headers: { "Access-Control-Allow-Origin": "*" } });
+  });
+  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await page.getByRole("textbox").fill("100 pesos for 3 people");
+  await page.getByRole("button", { name: "Send message" }).click();
+  await expect(page.getByText(/Tortang Talong costs.*add/)).toBeVisible();
+  await expect(page.getByText(/verified local execution/)).toHaveCount(0);
+  const request = page.waitForRequest(request => request.url().endsWith("/api/plans/generate"));
+  await page.getByRole("button", { name: "Use PHP 107 budget" }).click();
+  expect((await request).postDataJSON()).toMatchObject({ budget_php: 107, servings: 3 });
+  await expect(page.getByRole("heading", { name: "Egg meal" })).toBeVisible();
+});
