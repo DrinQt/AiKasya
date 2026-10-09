@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import init_db
-from app.routes import health, agent, plans, prices, recipes, pantry, ingredients
+from app.routes import health, agent, plans, prices, recipes, pantry, ingredients, exclusions
 
 
 @asynccontextmanager
@@ -33,6 +33,7 @@ app.include_router(prices.router)
 app.include_router(recipes.router)
 app.include_router(pantry.router)
 app.include_router(ingredients.router)
+app.include_router(exclusions.router)
 
 
 @app.get("/")

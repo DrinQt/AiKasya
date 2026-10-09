@@ -179,15 +179,19 @@ def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[
             pantry_mentions.append(standard_name)
 
     excluded: List[str] = []
+    # Exclusions and allergies ("walang baboy", "allergic ako sa hipon", "allergic to shrimp and peanuts").
+    # Word boundaries matter: "at"/"and" must be whole words, otherwise "walang patis" became "p".
     exclusion_patterns = [
-        r"(?:walang|ayaw ng|ayaw namin ng|bawal|no|without)\s+([a-zA-Z\s]+?)(?:,|at|and|\.|$)",
+        r"\b(?:walang|ayaw ko ng|ayaw namin ng|ayaw ng|bawal ang|bawal|iwas sa|no|without)\s+([a-z][a-z\s]*?)(?=,|\.|;|\bpero\b|\bbut\b|\d|$)",
+        r"\b(?:allergic|allergy|allergies|alergic|alerdyik|alerdyi|may allergy)\s+(?:ako\s+|kami\s+|siya\s+|po\s+)*(?:sa|to|ng|in)?\s*([a-z][a-z\s]*?)(?=,|\.|;|\bpero\b|\bbut\b|\d|$)",
     ]
+    filler = {"lang", "po", "kami", "ako", "na", "ang", "mga", "the", "any", "please", "pls", "sana"}
     for pattern in exclusion_patterns:
-        m = re.search(pattern, msg)
-        if m:
-            ex_item = m.group(1).strip()
-            if ex_item and ex_item not in ["kanin", "bawang"]:
-                excluded.append(ex_item)
+        for m in re.finditer(pattern, msg):
+            for part in re.split(r"\s*(?:,|\bat\b|\band\b|\bor\b|\bo\b)\s*", m.group(1)):
+                ex_item = " ".join(w for w in part.split() if w not in filler).strip()
+                if ex_item and ex_item not in ["kanin", "bawang"] and ex_item not in excluded:
+                    excluded.append(ex_item)
 
     missing: List[str] = []
     clarification: Optional[str] = None

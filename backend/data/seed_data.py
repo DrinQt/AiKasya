@@ -67,6 +67,11 @@ for _r in _store.recipes.values():
             "unit": _line["unit"],
             "optional": bool(_line.get("optional", False)),
             "substitutions": [s["ingredient_id"] for s in _line.get("substitutions") or []],
+            "substitution_details": [
+                {"ingredient_id": s["ingredient_id"], "quantity": float(s["quantity"]), "unit": s["unit"],
+                 "name": _store.ingredients[s["ingredient_id"]]["canonical_name"]}
+                for s in _line.get("substitutions") or []
+            ],
             **({"note": _line["note"]} if _line.get("note") else {}),
         })
     RECIPES_SEED.append({

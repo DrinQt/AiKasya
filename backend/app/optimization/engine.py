@@ -33,15 +33,21 @@ def evaluate_recipe_affordability(
         ing_name = ing.get("name", ing_id)
         is_optional = ing.get("optional", False)
 
+        sub_qty = sub_unit = None
         if ing_id in excluded_ids:
-            if not is_optional:
-                return None, f"Requires excluded ingredient: {ing_name}"
-            else:
+            if is_optional:
                 continue
+            safe = next((s for s in ing.get("substitution_details") or []
+                         if s["ingredient_id"] not in excluded_ids and s["ingredient_id"] in prices_map), None)
+            if not safe:
+                return None, f"Requires excluded ingredient: {ing_name}"
+            warnings.append(f"Substituted {ing_name} with {safe.get('name', safe['ingredient_id'])} because of your exclusions.")
+            ing_id, ing_name = safe["ingredient_id"], safe.get("name", safe["ingredient_id"])
+            sub_qty, sub_unit = float(safe["quantity"]), safe["unit"]
 
-        base_qty = float(ing["quantity"])
+        base_qty = float(ing["quantity"]) if sub_qty is None else sub_qty
         req_qty = base_qty * scale_factor
-        req_unit = ing["unit"]
+        req_unit = ing["unit"] if sub_unit is None else sub_unit
 
         pantry_qty, pantry_unit = pantry_map.get(ing_id, (0.0, req_unit))
 

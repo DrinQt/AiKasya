@@ -1,0 +1,182 @@
+{
+  "description": "Major food allergen groups used by AIKasya for allergy exclusions. Policy: when unsure, treat an ingredient as containing the allergen; packaged items carry a label-check warning. AIKasya is not a medical device; users with severe allergies must always read product labels.",
+  "groups": [
+    {
+      "allergen_id": "gluten",
+      "name": "Cereals containing gluten (wheat, rye, barley, oats)",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "gluten",
+        "wheat",
+        "trigo",
+        "flour",
+        "harina",
+        "rye",
+        "barley",
+        "oat",
+        "oats",
+        "celiac",
+        "coeliac"
+      ]
+    },
+    {
+      "allergen_id": "crustacean",
+      "name": "Crustaceans (shrimp, prawn, crab, lobster)",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "crustacean",
+        "crustaceans",
+        "crustacea",
+        "shellfish",
+        "shrimp",
+        "shrimps",
+        "prawn",
+        "prawns",
+        "hipon",
+        "sugpo",
+        "alamang",
+        "crab",
+        "crabs",
+        "alimango",
+        "alimasag",
+        "talangka",
+        "lobster",
+        "ulang",
+        "crayfish",
+        "seafood"
+      ]
+    },
+    {
+      "allergen_id": "egg",
+      "name": "Eggs",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "egg",
+        "eggs",
+        "itlog"
+      ]
+    },
+    {
+      "allergen_id": "fish",
+      "name": "Fish",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "fish",
+        "isda",
+        "seafood"
+      ]
+    },
+    {
+      "allergen_id": "peanut",
+      "name": "Peanuts",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "peanut",
+        "peanuts",
+        "mani",
+        "groundnut"
+      ]
+    },
+    {
+      "allergen_id": "soy",
+      "name": "Soybeans",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex CXS 1-1985 Section 4.2.1.5"
+      ],
+      "terms": [
+        "soy",
+        "soya",
+        "soybean",
+        "soybeans",
+        "soy bean",
+        "soy beans",
+        "utaw",
+        "balatong"
+      ]
+    },
+    {
+      "allergen_id": "milk",
+      "name": "Milk and milk products (including lactose)",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "milk",
+        "dairy",
+        "gatas",
+        "lactose",
+        "cheese",
+        "keso",
+        "butter",
+        "mantikilya"
+      ]
+    },
+    {
+      "allergen_id": "tree_nut",
+      "name": "Tree nuts",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "tree nut",
+        "tree nuts",
+        "nut",
+        "nuts",
+        "almond",
+        "cashew",
+        "kasoy",
+        "walnut",
+        "hazelnut",
+        "pecan",
+        "pistachio",
+        "pili",
+        "macadamia",
+        "brazil nut",
+        "pine nut"
+      ]
+    },
+    {
+      "allergen_id": "sesame",
+      "name": "Sesame",
+      "basis": [
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "sesame",
+        "linga"
+      ]
+    },
+    {
+      "allergen_id": "sulphite",
+      "name": "Sulphites (10 mg/kg or more)",
+      "basis": [
+        "DOH Administrative Order No. 2014-0030 (8 Sep 2014), Revised Rules and Regulations Governing the Labeling of Prepackaged Food Products, Section VI.A.9 - https://faolex.fao.org/docs/pdf/phi174223.pdf",
+        "Codex General Standard for the Labelling of Prepackaged Foods, CXS 1-1985 (revised 2024), Section 4.2.1.4 - https://new.cibum.gr/wp-content/uploads/2025/02/CXS_001e.pdf"
+      ],
+      "terms": [
+        "sulphite",
+        "sulphites",
+        "sulfite",
+        "sulfites"
+      ]
+    }
+  ]
+}

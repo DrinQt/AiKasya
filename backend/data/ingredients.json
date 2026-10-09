@@ -15,7 +15,10 @@
     "tags": [
       "grain"
     ],
-    "storage_notes": "Dry storage"
+    "storage_notes": "Dry storage",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "garlic",
@@ -30,7 +33,10 @@
     "tags": [
       "aromatic"
     ],
-    "storage_notes": "Dry, ventilated"
+    "storage_notes": "Dry, ventilated",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "onion",
@@ -47,7 +53,10 @@
     "tags": [
       "aromatic"
     ],
-    "storage_notes": "Dry, ventilated"
+    "storage_notes": "Dry, ventilated",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "tomato",
@@ -62,7 +71,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Room temp; use within days"
+    "storage_notes": "Room temp; use within days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "ginger",
@@ -77,7 +89,10 @@
     "tags": [
       "aromatic"
     ],
-    "storage_notes": "Dry storage"
+    "storage_notes": "Dry storage",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "soy_sauce",
@@ -94,7 +109,13 @@
       "soy",
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [
+      "soy",
+      "gluten"
+    ],
+    "allergen_evidence": "Soy sauce is a soybean product (DOST-ITDI Soybean Products brochure). Many brands also use wheat; treated as containing gluten unless the label says otherwise",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "vinegar",
@@ -110,7 +131,10 @@
     "tags": [
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "fish_sauce",
@@ -128,7 +152,12 @@
       "seafood",
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [
+      "fish"
+    ],
+    "allergen_evidence": "DOST-FNRI Philippine Food Composition Table item 4334 'Fish sauce' (alt. 'Patis') - https://i.fnri.dost.gov.ph/fct/library/report/4334",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "cooking_oil",
@@ -146,7 +175,10 @@
     "tags": [
       "oil"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "salt",
@@ -162,7 +194,10 @@
     "tags": [
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "black_pepper",
@@ -178,7 +213,10 @@
     "tags": [
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "bay_leaf",
@@ -194,7 +232,10 @@
     "tags": [
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "sugar",
@@ -210,7 +251,10 @@
     "tags": [
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "bagoong",
@@ -229,7 +273,12 @@
       "seafood",
       "condiment"
     ],
-    "storage_notes": "Refrigerate after opening"
+    "storage_notes": "Refrigerate after opening",
+    "allergens": [
+      "crustacean"
+    ],
+    "allergen_evidence": "DOST-FNRI Philippine Food Composition Table item 4344 'Shrimp paste, alamang' (alt. 'Bagoong hipon') - https://i.fnri.dost.gov.ph/fct/library/report/4344",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "sinigang_mix",
@@ -245,7 +294,10 @@
     "tags": [
       "condiment"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "Packaged seasoning: ingredients vary by brand - check the label",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "coconut_milk",
@@ -261,7 +313,10 @@
     "tags": [
       "coconut"
     ],
-    "storage_notes": "Use immediately after opening"
+    "storage_notes": "Use immediately after opening",
+    "allergens": [],
+    "allergen_evidence": "Coconut is not on the Philippine or Codex major-allergen lists; some people are allergic to coconut. Packaged products may contain additives - check the label",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "pork_kasim",
@@ -277,9 +332,14 @@
     "count_label": null,
     "tags": [
       "pork",
-      "meat"
+      "meat",
+      "baboy",
+      "karne"
     ],
-    "storage_notes": "Refrigerate; cook within 1-2 days"
+    "storage_notes": "Refrigerate; cook within 1-2 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "pork_giniling",
@@ -295,9 +355,14 @@
     "count_label": null,
     "tags": [
       "pork",
-      "meat"
+      "meat",
+      "baboy",
+      "karne"
     ],
-    "storage_notes": "Refrigerate; cook within 1 day"
+    "storage_notes": "Refrigerate; cook within 1 day",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "chicken",
@@ -315,9 +380,14 @@
     "tags": [
       "chicken",
       "poultry",
-      "meat"
+      "meat",
+      "karne",
+      "manok"
     ],
-    "storage_notes": "Refrigerate; cook within 1-2 days"
+    "storage_notes": "Refrigerate; cook within 1-2 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "tilapia",
@@ -334,7 +404,12 @@
       "fish",
       "seafood"
     ],
-    "storage_notes": "Refrigerate; cook same day"
+    "storage_notes": "Refrigerate; cook same day",
+    "allergens": [
+      "fish"
+    ],
+    "allergen_evidence": "Listed as fish in PSA Price Situationer Table 3 (Fish), Sep 2026",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "eggs",
@@ -351,7 +426,12 @@
     "tags": [
       "egg"
     ],
-    "storage_notes": "Cool, dry place"
+    "storage_notes": "Cool, dry place",
+    "allergens": [
+      "egg"
+    ],
+    "allergen_evidence": "Chicken egg (PSA Price Situationer Table 2, 'CHICKEN EGG')",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "tokwa",
@@ -367,7 +447,12 @@
     "tags": [
       "soy"
     ],
-    "storage_notes": "Refrigerate; use within 1-2 days"
+    "storage_notes": "Refrigerate; use within 1-2 days",
+    "allergens": [
+      "soy"
+    ],
+    "allergen_evidence": "Tokwa is soybean curd - DA Agricultural Training Institute, https://ati2.da.gov.ph/ati-12/content/node/680 ; DOST-ITDI Soybean Products brochure",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "sardines_can",
@@ -385,7 +470,12 @@
       "seafood",
       "canned"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [
+      "fish"
+    ],
+    "allergen_evidence": "Canned sardines are fish (DTI SRP category 'canned sardines'); sauce ingredients vary by brand",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "corned_beef_can",
@@ -401,9 +491,14 @@
     "tags": [
       "beef",
       "meat",
-      "canned"
+      "canned",
+      "karne",
+      "baka"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [],
+    "allergen_evidence": "Packaged: fillers (e.g. soy protein) vary by brand - check the label",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "misua",
@@ -420,7 +515,12 @@
       "wheat",
       "grain"
     ],
-    "storage_notes": "Pantry"
+    "storage_notes": "Pantry",
+    "allergens": [
+      "gluten"
+    ],
+    "allergen_evidence": "Misua is a wheat-flour noodle; treated as containing gluten (conservative)",
+    "allergen_label_check": true
   },
   {
     "ingredient_id": "kangkong",
@@ -435,7 +535,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Use same day"
+    "storage_notes": "Use same day",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "pechay",
@@ -452,7 +555,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; use within 2 days"
+    "storage_notes": "Refrigerate; use within 2 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "malunggay",
@@ -468,7 +574,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Use same day"
+    "storage_notes": "Use same day",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "talong",
@@ -484,7 +593,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Room temp; 2-3 days"
+    "storage_notes": "Room temp; 2-3 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "sitaw",
@@ -500,7 +612,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; 2-3 days"
+    "storage_notes": "Refrigerate; 2-3 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "kalabasa",
@@ -516,7 +631,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Whole keeps for weeks; cut use in 2 days"
+    "storage_notes": "Whole keeps for weeks; cut use in 2 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "sayote",
@@ -532,7 +650,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Room temp; about a week"
+    "storage_notes": "Room temp; about a week",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "ampalaya",
@@ -548,7 +669,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; 2-3 days"
+    "storage_notes": "Refrigerate; 2-3 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "labanos",
@@ -564,7 +688,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; about a week"
+    "storage_notes": "Refrigerate; about a week",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "okra",
@@ -579,7 +706,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; 2-3 days"
+    "storage_notes": "Refrigerate; 2-3 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "potato",
@@ -595,7 +725,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Dry, dark place"
+    "storage_notes": "Dry, dark place",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "carrot",
@@ -611,7 +744,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; about a week"
+    "storage_notes": "Refrigerate; about a week",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "cabbage",
@@ -627,7 +763,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; about a week"
+    "storage_notes": "Refrigerate; about a week",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "monggo",
@@ -644,7 +783,10 @@
     "tags": [
       "legume"
     ],
-    "storage_notes": "Dry storage"
+    "storage_notes": "Dry storage",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "calamansi",
@@ -660,7 +802,10 @@
     "tags": [
       "citrus"
     ],
-    "storage_notes": "Room temp"
+    "storage_notes": "Room temp",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "siling_haba",
@@ -678,7 +823,10 @@
       "chili",
       "vegetable"
     ],
-    "storage_notes": "Refrigerate"
+    "storage_notes": "Refrigerate",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "patola",
@@ -694,7 +842,10 @@
     "tags": [
       "vegetable"
     ],
-    "storage_notes": "Refrigerate; 2-3 days"
+    "storage_notes": "Refrigerate; 2-3 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "saba",
@@ -711,7 +862,10 @@
     "tags": [
       "fruit"
     ],
-    "storage_notes": "Room temp; ripens in 2-4 days"
+    "storage_notes": "Room temp; ripens in 2-4 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "lakatan",
@@ -729,7 +883,10 @@
     "tags": [
       "fruit"
     ],
-    "storage_notes": "Room temp; eat within 2-3 days"
+    "storage_notes": "Room temp; eat within 2-3 days",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   },
   {
     "ingredient_id": "mango",
@@ -747,6 +904,9 @@
     "tags": [
       "fruit"
     ],
-    "storage_notes": "Room temp until ripe, then refrigerate"
+    "storage_notes": "Room temp until ripe, then refrigerate",
+    "allergens": [],
+    "allergen_evidence": "",
+    "allergen_label_check": false
   }
 ]

@@ -37,15 +37,17 @@ class DataStore:
     ingredients: dict = field(default_factory=dict)   # ingredient_id -> dict
     prices: list = field(default_factory=list)          # list of price dicts
     recipes: dict = field(default_factory=dict)         # recipe_id -> dict
+    allergen_groups: list = field(default_factory=list)  # from data/allergens.json (optional)
     _alias_index: dict = field(default_factory=dict, repr=False)
 
     # ---------- construction ----------
     @classmethod
-    def from_records(cls, ingredients, prices, recipes) -> "DataStore":
+    def from_records(cls, ingredients, prices, recipes, allergen_groups=None) -> "DataStore":
         store = cls(
             ingredients={i["ingredient_id"]: dict(i) for i in ingredients},
             prices=[dict(p) for p in prices],
             recipes={r["recipe_id"]: dict(r) for r in recipes},
+            allergen_groups=[dict(g) for g in (allergen_groups or [])],
         )
         store._build_alias_index()
         return store
@@ -54,7 +56,8 @@ class DataStore:
     def from_json_dir(cls, data_dir=None) -> "DataStore":
         d = Path(data_dir) if data_dir else DEFAULT_DATA_DIR
         load = lambda n: json.loads((d / n).read_text(encoding="utf-8"))
-        return cls.from_records(load("ingredients.json"), load("prices.json"), load("recipes.json"))
+        groups = load("allergens.json")["groups"] if (d / "allergens.json").exists() else []
+        return cls.from_records(load("ingredients.json"), load("prices.json"), load("recipes.json"), groups)
 
     def _build_alias_index(self):
         idx = {}
@@ -81,9 +84,50 @@ class DataStore:
                 return self._alias_index[cand]
         return None
 
+    def allergen_groups_for_term(self, term: str) -> list:
+        """Allergen group ids whose terms include this word (e.g. 'hipon' -> ['crustacean'])."""
+        key = _norm_text(term)
+        out = []
+        for g in self.allergen_groups:
+            terms = {_norm_text(t) for t in g.get("terms", [])} | {_norm_text(g["allergen_id"])}
+            if key in terms or key.rstrip("s") in terms:
+                out.append(g["allergen_id"])
+        return out
+
+    def ingredients_with_allergens(self, allergen_ids) -> set:
+        wanted = set(allergen_ids)
+        return {iid for iid, ing in self.ingredients.items() if wanted & set(ing.get("allergens") or [])}
+
+    def resolve_exclusions(self, terms) -> dict:
+        """Turn user words ('shrimp', 'allergic sa isda', ids, aliases, tags) into ingredient ids to exclude.
+
+        Unknown words are returned in `unknown` and must NOT be silently ignored by callers.
+        """
+        resolved, unknown, ids = [], [], set()
+        for raw in terms or []:
+            term = str(raw or "").strip()
+            if not term:
+                continue
+            groups = self.allergen_groups_for_term(term)
+            hits = self.ingredients_matching_exclusion(term)
+            if not hits and not groups:
+                unknown.append(term)
+                continue
+            ids |= hits
+            resolved.append({
+                "term": term, "allergen_groups": groups,
+                "ingredient_ids": sorted(hits),
+                "ingredients": [self.ingredients[i]["canonical_name"] for i in sorted(hits)],
+            })
+        label_check = sorted(i for i, ing in self.ingredients.items()
+                             if ing.get("allergen_label_check") and i not in ids)
+        return {"excluded_ingredient_ids": sorted(ids), "resolved": resolved, "unknown": unknown,
+                "label_check_ingredient_ids": label_check}
+
     def ingredients_matching_exclusion(self, term: str) -> set:
-        """Ingredient ids hit by an exclusion term: an id, an alias, or a tag such as 'pork', 'seafood', 'egg'."""
-        hits = set()
+        """Ingredient ids hit by an exclusion term: an id, an alias, a tag such as 'pork',
+        or an allergen word such as 'shrimp' / 'hipon' / 'fish' (via data/allergens.json)."""
+        hits = set(self.ingredients_with_allergens(self.allergen_groups_for_term(term)))
         rid = self.resolve_ingredient_id(term)
         if rid:
             hits.add(rid)

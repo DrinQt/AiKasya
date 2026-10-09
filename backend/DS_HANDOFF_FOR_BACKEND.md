@@ -132,3 +132,74 @@ Docs: `app/budget_engine/README.md`. Checks: `python ds_check.py`, `python ds_tr
 - AI development tools used by the Data Science lead: Claude (Anthropic), for data sourcing and verification, code, tests and documentation.
 
 Questions: ask James before changing prices, recipes or the cited sources.
+
+---
+
+## 9. Allergies and exclusions (added 2026-10-10, ~03:50 PHT)
+
+Why: allergies are a medical concern. The old flow only blocked the exact ingredient a user named, so "allergic to fish" still served dishes seasoned with patis, and "shrimp" matched nothing.
+
+### Data (with sources)
+
+- `data/allergens.json` lists 10 major allergen groups: gluten cereals, crustaceans, egg, fish, peanut, soy, milk, tree nuts, sesame, sulphites. Each group has English and Tagalog words (shrimp/hipon/alamang, fish/isda, egg/itlog, peanut/mani, milk/gatas, ...).
+  - Basis: DOH Administrative Order 2014-0030 (FDA Philippines labeling of prepackaged food), Section VI.A.9.
+  - Sesame added from Codex CXS 1-1985, revised 2024, Section 4.2.1.4.
+- `data/ingredients.json` gives each ingredient new fields: `allergens`, `allergen_evidence` (the source) and `allergen_label_check`. Ingredients with allergens:
+  - bagoong -> crustacean (DOST-FNRI Food Composition Table 4344, "Shrimp paste, alamang / Bagoong hipon")
+  - patis -> fish (DOST-FNRI 4334, "Fish sauce / Patis")
+  - tilapia and canned sardines -> fish
+  - eggs -> egg
+  - tokwa -> soy (DA-ATI "Tokwa (soybean curd)")
+  - soy sauce -> soy, plus gluten (conservative: many brands use wheat)
+  - misua -> gluten (conservative)
+- Safety rule: when unsure, block. Packaged items (soy sauce, patis, bagoong, canned sardines, corned beef, sinigang mix, coconut milk, misua) produce "read the label" warnings whenever the user has allergies, because recipes vary by brand.
+
+### Backend behavior
+
+- `POST /api/plans/generate` and `POST /api/plans/reprice`: `excluded_ingredient_ids` now accepts ingredient ids OR words ("shrimp", "hipon", "isda", "baboy", "peanut"). Words expand to every matching ingredient. Reprice gained an optional `excluded_ingredient_ids` field.
+- An unknown word is never ignored. `/plans/generate` returns `status: "invalid_request"` with a clarification message; `/plans/reprice` returns HTTP 422.
+- Safe substitution: where a recipe lists one, the excluded ingredient is swapped (for example patis -> salt for a fish allergy) with a warning. Otherwise the recipe is removed. Pinakbet is removed for a shrimp allergy, since bagoong has no substitute.
+- New `POST /api/exclusions/resolve`, body `{"terms": ["shrimp", "isda"]}`, returns:
+  - `excluded_ingredient_ids`
+  - `resolved` (term -> allergen groups -> ingredient names, to show the user)
+  - `unknown` (ask the user)
+  - `disclaimer`
+- New module `app/allergy.py` (shared with `app/budget_engine` DataStore).
+
+### Local AI fallback parser fixes (`app/local_ai/parser.py`)
+
+- It now extracts allergy phrases: "allergic ako sa hipon", "I'm allergic to shrimp and peanuts", "may allergy kami sa isda at hipon". Before, these returned nothing.
+- Bug fix: "walang patis" used to become "p", because "at" inside "patis" was treated as the word "at". Whole-word matching now applies, and all exclusions in a sentence are captured.
+
+### For the frontend lead
+
+- Simplest change in `front end/src/api.ts` `generatePlan`: send the AI's words directly, because the backend resolves them now. Replace the `excluded` mapping (the part that throws "Please clarify the excluded ingredient") with:
+
+```ts
+const excluded = interpretation?.excluded_ingredients ?? [];
+```
+
+  Also include saved allergies from the allergy screen, so they apply to every plan, for example:
+
+```ts
+const excluded = [...(state.allergies ?? []), ...(interpretation?.excluded_ingredients ?? [])];
+```
+
+- Optional: call `POST /api/exclusions/resolve` when the user saves an allergy. Show `resolved[].ingredients` ("Shrimp -> Shrimp paste"), and ask again if `unknown` is not empty.
+- Show option `warnings` (substitutions and "read the label") on the meal cards.
+- Show the disclaimer once on the allergy screen: AIKasya is not a medical device; always read product labels.
+
+### Tests
+
+`tests/test_allergies.py` has 8 tests covering:
+
+- English and Tagalog words
+- shrimp -> no bagoong, Pinakbet removed
+- fish -> no patis, tilapia or sardines, with patis -> salt substitution
+- unknown words -> clarification
+- label warnings appear only when allergies are set
+- old id-based requests still work
+- parser extraction
+- chat -> safe plan end to end
+
+Full backend: 65 passed; qa_matrix 10/10; ds_check 13/13.

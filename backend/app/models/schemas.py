@@ -96,6 +96,11 @@ class PlanRepriceRequest(BaseModel):
     budget_php: float
     servings: int
     pantry: List[PantryInputItem] = Field(default_factory=list)
+    excluded_ingredient_ids: List[str] = Field(default_factory=list, description="Ingredient ids or allergy words")
+
+
+class ExclusionResolveRequest(BaseModel):
+    terms: List[str] = Field(default_factory=list, description="Allergy/exclusion words or ingredient ids, e.g. 'shrimp', 'isda', 'pork'")
 
 
 PriceSourceType = Literal["official_reference", "user_entered", "demo_seed"]
