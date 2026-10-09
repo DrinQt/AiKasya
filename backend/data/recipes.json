@@ -1,0 +1,1196 @@
+[
+  {
+    "recipe_id": "ginisang-monggo",
+    "name": "Ginisang Monggo",
+    "category": "soup_stew",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 40,
+    "ingredients": [
+      {
+        "ingredient_id": "monggo",
+        "quantity": 250,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 15,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "tomato",
+        "quantity": 100,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "malunggay",
+        "quantity": 1,
+        "unit": "piece",
+        "optional": true
+      },
+      {
+        "ingredient_id": "pork_giniling",
+        "quantity": 100,
+        "unit": "g",
+        "optional": true
+      },
+      {
+        "ingredient_id": "fish_sauce",
+        "quantity": 30,
+        "unit": "ml",
+        "substitutions": [
+          {
+            "ingredient_id": "salt",
+            "quantity": 5,
+            "unit": "g"
+          }
+        ]
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 30,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Rinse the mung beans and boil in about 6 cups of water until soft, 30-35 minutes.",
+      "In another pot, saute garlic, onion and tomato in oil (add ground pork here if using).",
+      "Pour the softened beans and their liquid into the saute and simmer 5 minutes.",
+      "Season with fish sauce, add malunggay leaves if using, then turn off the heat."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "tortang-talong",
+    "name": "Tortang Talong",
+    "category": "egg_dish",
+    "meal_types": [
+      "breakfast",
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 25,
+    "ingredients": [
+      {
+        "ingredient_id": "talong",
+        "quantity": 500,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "eggs",
+        "quantity": 4,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 10,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "salt",
+        "quantity": 5,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 100,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Grill or boil the eggplants until soft, then peel and flatten each with a fork.",
+      "Beat eggs with minced garlic and salt.",
+      "Dip each flattened eggplant in the egg mixture.",
+      "Pan-fry in oil until golden on both sides."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "adobong-kangkong",
+    "name": "Adobong Kangkong",
+    "category": "vegetable",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 15,
+    "ingredients": [
+      {
+        "ingredient_id": "kangkong",
+        "quantity": 2,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 25,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "soy_sauce",
+        "quantity": 45,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "vinegar",
+        "quantity": 30,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 30,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "black_pepper",
+        "quantity": 2,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Wash kangkong and cut into 3-inch pieces, separating stems and leaves.",
+      "Saute garlic in oil until fragrant.",
+      "Add stems first, then soy sauce, vinegar and pepper; let it boil without stirring for 1 minute.",
+      "Add the leaves, toss and cook 2 more minutes."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "sardinas-misua",
+    "name": "Sardinas with Misua",
+    "category": "soup_stew",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 5,
+    "cook_minutes": 20,
+    "ingredients": [
+      {
+        "ingredient_id": "sardines_can",
+        "quantity": 2,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "misua",
+        "quantity": 100,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 50,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 10,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "patola",
+        "quantity": 250,
+        "unit": "g",
+        "optional": true
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Saute garlic and onion in oil.",
+      "Add the canned sardines with sauce and about 4 cups of water; bring to a boil.",
+      "Add sliced patola if using and cook 3 minutes.",
+      "Add misua, cook 1-2 minutes until soft, and serve hot."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "ginisang-sayote",
+    "name": "Ginisang Sayote",
+    "category": "vegetable",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 20,
+    "ingredients": [
+      {
+        "ingredient_id": "sayote",
+        "quantity": 500,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "pork_giniling",
+        "quantity": 150,
+        "unit": "g",
+        "substitutions": [
+          {
+            "ingredient_id": "tokwa",
+            "quantity": 2,
+            "unit": "piece"
+          }
+        ]
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 15,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "tomato",
+        "quantity": 100,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "fish_sauce",
+        "quantity": 20,
+        "unit": "ml",
+        "substitutions": [
+          {
+            "ingredient_id": "salt",
+            "quantity": 5,
+            "unit": "g"
+          }
+        ]
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 30,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Peel and slice sayote into strips.",
+      "Saute garlic, onion and tomato in oil.",
+      "Add ground pork (or cubed tofu) and cook until browned.",
+      "Add sayote and a little water; cook until tender and season with fish sauce."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "pritong-tilapia",
+    "name": "Pritong Tilapia with Ensaladang Kamatis",
+    "category": "fish",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 20,
+    "ingredients": [
+      {
+        "ingredient_id": "tilapia",
+        "quantity": 800,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "salt",
+        "quantity": 10,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 150,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "tomato",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 50,
+        "unit": "g",
+        "optional": true
+      },
+      {
+        "ingredient_id": "calamansi",
+        "quantity": 40,
+        "unit": "g",
+        "optional": true,
+        "note": "About 1 calamansi per 10 g"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Clean the tilapia, pat dry and rub with salt.",
+      "Fry in hot oil until crisp on both sides, about 6-8 minutes per side.",
+      "Dice tomatoes (and onion if using) for a simple side salad; season with a pinch of salt.",
+      "Serve fish with the salad and calamansi if available."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "sinigang-na-baboy",
+    "name": "Sinigang na Baboy",
+    "category": "soup_stew",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 15,
+    "cook_minutes": 60,
+    "ingredients": [
+      {
+        "ingredient_id": "pork_kasim",
+        "quantity": 500,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "sinigang_mix",
+        "quantity": 1,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "kangkong",
+        "quantity": 1,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "labanos",
+        "quantity": 200,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "sitaw",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "talong",
+        "quantity": 200,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "tomato",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 100,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "siling_haba",
+        "quantity": 2,
+        "unit": "piece",
+        "optional": true
+      },
+      {
+        "ingredient_id": "fish_sauce",
+        "quantity": 30,
+        "unit": "ml",
+        "substitutions": [
+          {
+            "ingredient_id": "salt",
+            "quantity": 5,
+            "unit": "g"
+          }
+        ]
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Boil pork with tomato and onion in about 8 cups of water; simmer until tender, about 45 minutes.",
+      "Add radish and string beans; cook 5 minutes.",
+      "Add eggplant, sinigang mix and chili if using; cook 3 minutes.",
+      "Add kangkong, season with fish sauce and turn off the heat."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "adobong-manok",
+    "name": "Adobong Manok",
+    "category": "meat",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 45,
+    "ingredients": [
+      {
+        "ingredient_id": "chicken",
+        "quantity": 750,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "soy_sauce",
+        "quantity": 90,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "vinegar",
+        "quantity": 60,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 30,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "bay_leaf",
+        "quantity": 2,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "black_pepper",
+        "quantity": 2,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Combine chicken, soy sauce, garlic, bay leaves and pepper; rest 15 minutes if time allows.",
+      "Simmer covered with a half cup of water for 25 minutes.",
+      "Add vinegar and simmer uncovered without stirring for 5 minutes.",
+      "Optionally pan-fry the chicken in oil, return to the sauce and reduce."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "tinolang-manok",
+    "name": "Tinolang Manok",
+    "category": "soup_stew",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 40,
+    "ingredients": [
+      {
+        "ingredient_id": "chicken",
+        "quantity": 600,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "sayote",
+        "quantity": 250,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "ginger",
+        "quantity": 30,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "malunggay",
+        "quantity": 1,
+        "unit": "piece",
+        "optional": true
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 15,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "fish_sauce",
+        "quantity": 30,
+        "unit": "ml",
+        "substitutions": [
+          {
+            "ingredient_id": "salt",
+            "quantity": 5,
+            "unit": "g"
+          }
+        ]
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Saute garlic, onion and sliced ginger in oil.",
+      "Add chicken and fish sauce; cook until lightly browned.",
+      "Add about 6 cups water and simmer 25 minutes.",
+      "Add sayote wedges, cook until tender, then add malunggay if using."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "corned-beef-guisado",
+    "name": "Corned Beef Guisado with Patatas",
+    "category": "meat",
+    "meal_types": [
+      "breakfast",
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 15,
+    "ingredients": [
+      {
+        "ingredient_id": "corned_beef_can",
+        "quantity": 2,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "potato",
+        "quantity": 250,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 15,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Dice potatoes and fry in oil until almost tender.",
+      "Add garlic and onion and saute until soft.",
+      "Add corned beef and a splash of water; cook 5 minutes, stirring."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "arroz-caldo",
+    "name": "Arroz Caldo",
+    "category": "soup_stew",
+    "meal_types": [
+      "breakfast",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 45,
+    "ingredients": [
+      {
+        "ingredient_id": "rice",
+        "quantity": 300,
+        "unit": "g",
+        "note": "Cooked into the porridge"
+      },
+      {
+        "ingredient_id": "chicken",
+        "quantity": 300,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "ginger",
+        "quantity": 40,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 30,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "fish_sauce",
+        "quantity": 30,
+        "unit": "ml",
+        "substitutions": [
+          {
+            "ingredient_id": "salt",
+            "quantity": 5,
+            "unit": "g"
+          }
+        ]
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "eggs",
+        "quantity": 4,
+        "unit": "piece",
+        "optional": true
+      },
+      {
+        "ingredient_id": "calamansi",
+        "quantity": 40,
+        "unit": "g",
+        "optional": true,
+        "note": "About 1 calamansi per 10 g"
+      }
+    ],
+    "steps": [
+      "Saute half the garlic, the onion and ginger strips in oil; add chicken and fish sauce.",
+      "Add rinsed rice, stir 2 minutes, then add about 8 cups water.",
+      "Simmer, stirring often, until thick, about 35 minutes.",
+      "Fry the remaining garlic until golden; top each bowl with it (and a boiled egg and calamansi if using)."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "ginataang-kalabasa-sitaw",
+    "name": "Ginataang Kalabasa at Sitaw",
+    "category": "vegetable",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 25,
+    "ingredients": [
+      {
+        "ingredient_id": "kalabasa",
+        "quantity": 500,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "sitaw",
+        "quantity": 250,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "coconut_milk",
+        "quantity": 400,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 15,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "fish_sauce",
+        "quantity": 20,
+        "unit": "ml",
+        "substitutions": [
+          {
+            "ingredient_id": "salt",
+            "quantity": 5,
+            "unit": "g"
+          }
+        ]
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Saute garlic and onion in oil.",
+      "Add squash cubes and coconut milk; simmer 10 minutes.",
+      "Add string beans and cook until tender, about 5 minutes.",
+      "Season with fish sauce."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "ginisang-pechay-tokwa",
+    "name": "Ginisang Pechay with Tokwa",
+    "category": "vegetable",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 15,
+    "ingredients": [
+      {
+        "ingredient_id": "pechay",
+        "quantity": 500,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "tokwa",
+        "quantity": 2,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 15,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "soy_sauce",
+        "quantity": 30,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 30,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Cube the tofu and fry in oil until golden; set aside.",
+      "Saute garlic and onion in the same pan.",
+      "Add pechay stems, then leaves, and soy sauce; cook 3 minutes.",
+      "Return the tofu, toss and serve."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "itlog-kamatis",
+    "name": "Ginisang Itlog at Kamatis",
+    "category": "egg_dish",
+    "meal_types": [
+      "breakfast",
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 5,
+    "cook_minutes": 10,
+    "ingredients": [
+      {
+        "ingredient_id": "eggs",
+        "quantity": 6,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "tomato",
+        "quantity": 200,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "salt",
+        "quantity": 3,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Saute onion and chopped tomato in oil until soft.",
+      "Pour in beaten eggs seasoned with salt.",
+      "Stir gently until just set."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "sinangag-at-itlog",
+    "name": "Sinangag at Pritong Itlog",
+    "category": "rice_dish",
+    "meal_types": [
+      "breakfast"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 5,
+    "cook_minutes": 15,
+    "ingredients": [
+      {
+        "ingredient_id": "rice",
+        "quantity": 500,
+        "unit": "g",
+        "note": "Cooked ahead, ideally day-old"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 40,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "eggs",
+        "quantity": 4,
+        "unit": "piece"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 45,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "salt",
+        "quantity": 5,
+        "unit": "g"
+      }
+    ],
+    "steps": [
+      "Cook the rice ahead and let it cool.",
+      "Fry minced garlic in oil until golden; add rice and salt and stir-fry until heated through.",
+      "Fry the eggs in the remaining oil and serve on top."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "pinakbet",
+    "name": "Pinakbet",
+    "category": "vegetable",
+    "meal_types": [
+      "lunch",
+      "dinner"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 15,
+    "cook_minutes": 25,
+    "ingredients": [
+      {
+        "ingredient_id": "kalabasa",
+        "quantity": 250,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "sitaw",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "talong",
+        "quantity": 200,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "ampalaya",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "okra",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "tomato",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "onion",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "garlic",
+        "quantity": 15,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "bagoong",
+        "quantity": 60,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "pork_giniling",
+        "quantity": 100,
+        "unit": "g",
+        "optional": true
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 15,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "rice",
+        "quantity": 400,
+        "unit": "g",
+        "role": "rice_side",
+        "note": "Uncooked rice to serve as kanin (about 100 g per serving)"
+      }
+    ],
+    "steps": [
+      "Saute garlic, onion and tomato in oil (brown the pork here if using).",
+      "Add shrimp paste and a cup of water; bring to a boil.",
+      "Add squash first, then string beans, eggplant, bitter gourd and okra.",
+      "Cover and simmer until vegetables are just tender, about 10 minutes; avoid over-stirring."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "banana-cue",
+    "name": "Banana Cue",
+    "category": "merienda",
+    "meal_types": [
+      "snack"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 20,
+    "ingredients": [
+      {
+        "ingredient_id": "saba",
+        "quantity": 1000,
+        "unit": "g",
+        "note": "About 8 ripe saba (2 per serving)"
+      },
+      {
+        "ingredient_id": "sugar",
+        "quantity": 150,
+        "unit": "g"
+      },
+      {
+        "ingredient_id": "cooking_oil",
+        "quantity": 300,
+        "unit": "ml",
+        "note": "For frying"
+      }
+    ],
+    "steps": [
+      "Peel the saba; skewer two bananas per bamboo stick if available.",
+      "Heat the oil in a deep pan over medium heat and fry the bananas until lightly golden.",
+      "Sprinkle the brown sugar into the oil around the bananas and keep turning them so the melted sugar coats them.",
+      "Lift out once evenly caramelized and let the coating harden for a minute before serving."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "ginataang-saba",
+    "name": "Ginataang Saba",
+    "category": "merienda",
+    "meal_types": [
+      "snack"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 20,
+    "ingredients": [
+      {
+        "ingredient_id": "saba",
+        "quantity": 750,
+        "unit": "g",
+        "note": "About 6 ripe saba"
+      },
+      {
+        "ingredient_id": "coconut_milk",
+        "quantity": 400,
+        "unit": "ml"
+      },
+      {
+        "ingredient_id": "sugar",
+        "quantity": 100,
+        "unit": "g"
+      }
+    ],
+    "steps": [
+      "Peel the saba and slice each into 3 or 4 pieces.",
+      "Simmer the coconut milk with 1 cup of water and the brown sugar, stirring until dissolved.",
+      "Add the saba and simmer gently for 10-15 minutes until soft.",
+      "Serve warm or cold."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  },
+  {
+    "recipe_id": "prutas-mangga-saging",
+    "name": "Sariwang Mangga at Lakatan",
+    "category": "fruit",
+    "meal_types": [
+      "breakfast",
+      "snack"
+    ],
+    "base_servings": 4,
+    "prep_minutes": 10,
+    "cook_minutes": 0,
+    "ingredients": [
+      {
+        "ingredient_id": "mango",
+        "quantity": 500,
+        "unit": "g",
+        "note": "About 2 ripe mangoes"
+      },
+      {
+        "ingredient_id": "lakatan",
+        "quantity": 500,
+        "unit": "g",
+        "note": "About 4 bananas"
+      }
+    ],
+    "steps": [
+      "Wash the mangoes, slice off the cheeks and score them into cubes.",
+      "Peel and slice the bananas.",
+      "Arrange on a plate and serve fresh."
+    ],
+    "source_title": "Original team-written home-style instructions (common Filipino dish; no copyrighted text reproduced)",
+    "source_url_or_note": "Written by AIKasya team, Oct 2026",
+    "rights_status": "original_team_written"
+  }
+]

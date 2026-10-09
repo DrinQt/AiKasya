@@ -1,0 +1,752 @@
+[
+  {
+    "ingredient_id": "rice",
+    "canonical_name": "Rice (regular milled)",
+    "aliases": [
+      "bigas",
+      "kanin",
+      "white rice",
+      "sinaing"
+    ],
+    "category": "grain",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "grain"
+    ],
+    "storage_notes": "Dry storage"
+  },
+  {
+    "ingredient_id": "garlic",
+    "canonical_name": "Garlic",
+    "aliases": [
+      "bawang"
+    ],
+    "category": "aromatic",
+    "base_unit": "g",
+    "default_purchase_increment": 50,
+    "count_label": null,
+    "tags": [
+      "aromatic"
+    ],
+    "storage_notes": "Dry, ventilated"
+  },
+  {
+    "ingredient_id": "onion",
+    "canonical_name": "Red onion",
+    "aliases": [
+      "sibuyas",
+      "sibuyas pula",
+      "red onion"
+    ],
+    "category": "aromatic",
+    "base_unit": "g",
+    "default_purchase_increment": 100,
+    "count_label": null,
+    "tags": [
+      "aromatic"
+    ],
+    "storage_notes": "Dry, ventilated"
+  },
+  {
+    "ingredient_id": "tomato",
+    "canonical_name": "Tomato",
+    "aliases": [
+      "kamatis"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 100,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Room temp; use within days"
+  },
+  {
+    "ingredient_id": "ginger",
+    "canonical_name": "Ginger",
+    "aliases": [
+      "luya"
+    ],
+    "category": "aromatic",
+    "base_unit": "g",
+    "default_purchase_increment": 50,
+    "count_label": null,
+    "tags": [
+      "aromatic"
+    ],
+    "storage_notes": "Dry storage"
+  },
+  {
+    "ingredient_id": "soy_sauce",
+    "canonical_name": "Soy sauce",
+    "aliases": [
+      "toyo",
+      "soy sauce"
+    ],
+    "category": "condiment",
+    "base_unit": "ml",
+    "default_purchase_increment": 200,
+    "count_label": null,
+    "tags": [
+      "soy",
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "vinegar",
+    "canonical_name": "Cane vinegar",
+    "aliases": [
+      "suka",
+      "vinegar"
+    ],
+    "category": "condiment",
+    "base_unit": "ml",
+    "default_purchase_increment": 200,
+    "count_label": null,
+    "tags": [
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "fish_sauce",
+    "canonical_name": "Fish sauce",
+    "aliases": [
+      "patis",
+      "fish sauce"
+    ],
+    "category": "condiment",
+    "base_unit": "ml",
+    "default_purchase_increment": 150,
+    "count_label": null,
+    "tags": [
+      "fish",
+      "seafood",
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "cooking_oil",
+    "canonical_name": "Cooking oil",
+    "aliases": [
+      "mantika",
+      "oil",
+      "langis",
+      "cooking oil"
+    ],
+    "category": "condiment",
+    "base_unit": "ml",
+    "default_purchase_increment": 350,
+    "count_label": null,
+    "tags": [
+      "oil"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "salt",
+    "canonical_name": "Iodized salt",
+    "aliases": [
+      "asin",
+      "salt"
+    ],
+    "category": "condiment",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "black_pepper",
+    "canonical_name": "Ground black pepper",
+    "aliases": [
+      "paminta",
+      "pepper"
+    ],
+    "category": "condiment",
+    "base_unit": "g",
+    "default_purchase_increment": 10,
+    "count_label": null,
+    "tags": [
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "bay_leaf",
+    "canonical_name": "Bay leaves",
+    "aliases": [
+      "laurel",
+      "dahon ng laurel"
+    ],
+    "category": "condiment",
+    "base_unit": "g",
+    "default_purchase_increment": 5,
+    "count_label": null,
+    "tags": [
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "sugar",
+    "canonical_name": "Brown sugar",
+    "aliases": [
+      "asukal",
+      "sugar"
+    ],
+    "category": "condiment",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "bagoong",
+    "canonical_name": "Shrimp paste",
+    "aliases": [
+      "bagoong",
+      "bagoong alamang",
+      "shrimp paste"
+    ],
+    "category": "condiment",
+    "base_unit": "g",
+    "default_purchase_increment": 100,
+    "count_label": null,
+    "tags": [
+      "shellfish",
+      "seafood",
+      "condiment"
+    ],
+    "storage_notes": "Refrigerate after opening"
+  },
+  {
+    "ingredient_id": "sinigang_mix",
+    "canonical_name": "Sinigang tamarind mix",
+    "aliases": [
+      "sinigang mix",
+      "sampalok mix"
+    ],
+    "category": "condiment",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "sachet",
+    "tags": [
+      "condiment"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "coconut_milk",
+    "canonical_name": "Coconut milk",
+    "aliases": [
+      "gata",
+      "kakang gata"
+    ],
+    "category": "dairy_alt",
+    "base_unit": "ml",
+    "default_purchase_increment": 200,
+    "count_label": null,
+    "tags": [
+      "coconut"
+    ],
+    "storage_notes": "Use immediately after opening"
+  },
+  {
+    "ingredient_id": "pork_kasim",
+    "canonical_name": "Pork shoulder (kasim)",
+    "aliases": [
+      "kasim",
+      "baboy",
+      "pork"
+    ],
+    "category": "meat",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "pork",
+      "meat"
+    ],
+    "storage_notes": "Refrigerate; cook within 1-2 days"
+  },
+  {
+    "ingredient_id": "pork_giniling",
+    "canonical_name": "Ground pork",
+    "aliases": [
+      "giniling",
+      "giniling na baboy",
+      "ground pork"
+    ],
+    "category": "meat",
+    "base_unit": "g",
+    "default_purchase_increment": 100,
+    "count_label": null,
+    "tags": [
+      "pork",
+      "meat"
+    ],
+    "storage_notes": "Refrigerate; cook within 1 day"
+  },
+  {
+    "ingredient_id": "chicken",
+    "canonical_name": "Chicken (dressed)",
+    "aliases": [
+      "chicken",
+      "dressed chicken",
+      "manok",
+      "whole chicken"
+    ],
+    "category": "meat",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "chicken",
+      "poultry",
+      "meat"
+    ],
+    "storage_notes": "Refrigerate; cook within 1-2 days"
+  },
+  {
+    "ingredient_id": "tilapia",
+    "canonical_name": "Tilapia",
+    "aliases": [
+      "tilapia",
+      "isda"
+    ],
+    "category": "fish",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "fish",
+      "seafood"
+    ],
+    "storage_notes": "Refrigerate; cook same day"
+  },
+  {
+    "ingredient_id": "eggs",
+    "canonical_name": "Chicken eggs (medium)",
+    "aliases": [
+      "itlog",
+      "egg",
+      "eggs"
+    ],
+    "category": "egg",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "piece",
+    "tags": [
+      "egg"
+    ],
+    "storage_notes": "Cool, dry place"
+  },
+  {
+    "ingredient_id": "tokwa",
+    "canonical_name": "Firm tofu",
+    "aliases": [
+      "tokwa",
+      "tofu"
+    ],
+    "category": "protein",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "block",
+    "tags": [
+      "soy"
+    ],
+    "storage_notes": "Refrigerate; use within 1-2 days"
+  },
+  {
+    "ingredient_id": "sardines_can",
+    "canonical_name": "Canned sardines in tomato sauce (155 g)",
+    "aliases": [
+      "sardinas",
+      "sardines"
+    ],
+    "category": "canned",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "can",
+    "tags": [
+      "fish",
+      "seafood",
+      "canned"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "corned_beef_can",
+    "canonical_name": "Canned corned beef (150 g)",
+    "aliases": [
+      "corned beef",
+      "carne norte"
+    ],
+    "category": "canned",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "can",
+    "tags": [
+      "beef",
+      "meat",
+      "canned"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "misua",
+    "canonical_name": "Misua noodles",
+    "aliases": [
+      "misua",
+      "miswa"
+    ],
+    "category": "grain",
+    "base_unit": "g",
+    "default_purchase_increment": 100,
+    "count_label": null,
+    "tags": [
+      "wheat",
+      "grain"
+    ],
+    "storage_notes": "Pantry"
+  },
+  {
+    "ingredient_id": "kangkong",
+    "canonical_name": "Kangkong (water spinach)",
+    "aliases": [
+      "kangkong"
+    ],
+    "category": "vegetable",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "bundle",
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Use same day"
+  },
+  {
+    "ingredient_id": "pechay",
+    "canonical_name": "Pechay",
+    "aliases": [
+      "pechay",
+      "petsay",
+      "bok choy"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; use within 2 days"
+  },
+  {
+    "ingredient_id": "malunggay",
+    "canonical_name": "Malunggay leaves",
+    "aliases": [
+      "malunggay",
+      "moringa"
+    ],
+    "category": "vegetable",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "bundle",
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Use same day"
+  },
+  {
+    "ingredient_id": "talong",
+    "canonical_name": "Eggplant",
+    "aliases": [
+      "talong",
+      "eggplant"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Room temp; 2-3 days"
+  },
+  {
+    "ingredient_id": "sitaw",
+    "canonical_name": "String beans",
+    "aliases": [
+      "sitaw",
+      "string beans"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; 2-3 days"
+  },
+  {
+    "ingredient_id": "kalabasa",
+    "canonical_name": "Squash",
+    "aliases": [
+      "kalabasa",
+      "squash"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Whole keeps for weeks; cut use in 2 days"
+  },
+  {
+    "ingredient_id": "sayote",
+    "canonical_name": "Chayote",
+    "aliases": [
+      "sayote",
+      "chayote"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Room temp; about a week"
+  },
+  {
+    "ingredient_id": "ampalaya",
+    "canonical_name": "Bitter gourd",
+    "aliases": [
+      "ampalaya",
+      "bitter gourd"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; 2-3 days"
+  },
+  {
+    "ingredient_id": "labanos",
+    "canonical_name": "Radish",
+    "aliases": [
+      "labanos",
+      "radish"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; about a week"
+  },
+  {
+    "ingredient_id": "okra",
+    "canonical_name": "Okra",
+    "aliases": [
+      "okra"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; 2-3 days"
+  },
+  {
+    "ingredient_id": "potato",
+    "canonical_name": "Potato",
+    "aliases": [
+      "patatas",
+      "potato"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Dry, dark place"
+  },
+  {
+    "ingredient_id": "carrot",
+    "canonical_name": "Carrot",
+    "aliases": [
+      "karot",
+      "carrot"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; about a week"
+  },
+  {
+    "ingredient_id": "cabbage",
+    "canonical_name": "Cabbage",
+    "aliases": [
+      "repolyo",
+      "cabbage"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; about a week"
+  },
+  {
+    "ingredient_id": "monggo",
+    "canonical_name": "Mung beans",
+    "aliases": [
+      "monggo",
+      "munggo",
+      "mung beans"
+    ],
+    "category": "legume",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "legume"
+    ],
+    "storage_notes": "Dry storage"
+  },
+  {
+    "ingredient_id": "calamansi",
+    "canonical_name": "Calamansi",
+    "aliases": [
+      "kalamansi",
+      "calamansi"
+    ],
+    "category": "fruit",
+    "base_unit": "g",
+    "default_purchase_increment": 100,
+    "count_label": null,
+    "tags": [
+      "citrus"
+    ],
+    "storage_notes": "Room temp"
+  },
+  {
+    "ingredient_id": "siling_haba",
+    "canonical_name": "Long green chili",
+    "aliases": [
+      "siling haba",
+      "siling pansigang",
+      "green chili"
+    ],
+    "category": "vegetable",
+    "base_unit": "piece",
+    "default_purchase_increment": 1,
+    "count_label": "piece",
+    "tags": [
+      "chili",
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate"
+  },
+  {
+    "ingredient_id": "patola",
+    "canonical_name": "Sponge gourd",
+    "aliases": [
+      "patola",
+      "luffa"
+    ],
+    "category": "vegetable",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "vegetable"
+    ],
+    "storage_notes": "Refrigerate; 2-3 days"
+  },
+  {
+    "ingredient_id": "saba",
+    "canonical_name": "Saba banana",
+    "aliases": [
+      "saba",
+      "saging na saba",
+      "cardaba banana"
+    ],
+    "category": "fruit",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "fruit"
+    ],
+    "storage_notes": "Room temp; ripens in 2-4 days"
+  },
+  {
+    "ingredient_id": "lakatan",
+    "canonical_name": "Lakatan banana",
+    "aliases": [
+      "lakatan",
+      "saging na lakatan",
+      "saging",
+      "banana"
+    ],
+    "category": "fruit",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "fruit"
+    ],
+    "storage_notes": "Room temp; eat within 2-3 days"
+  },
+  {
+    "ingredient_id": "mango",
+    "canonical_name": "Carabao mango (ripe)",
+    "aliases": [
+      "mangga",
+      "mango",
+      "carabao mango",
+      "manggang hinog"
+    ],
+    "category": "fruit",
+    "base_unit": "g",
+    "default_purchase_increment": 250,
+    "count_label": null,
+    "tags": [
+      "fruit"
+    ],
+    "storage_notes": "Room temp until ripe, then refrigerate"
+  }
+]

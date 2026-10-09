@@ -1,391 +1,85 @@
-from typing import List, Dict, Any
+"""Seed data for the AIKasya SQLite database.
+
+Single source of truth: the Data Science dataset in this folder
+(ingredients.json, recipes.json, prices.json), maintained by the Data Science lead.
+  - prices: official PSA (Sep 2026) / DA (Mar 2025) / DTI (Feb 2025) figures with cited sources,
+    or clearly labeled demo_seed estimates. See data/sources/ and DS_HANDOFF_FOR_BACKEND.md.
+  - weekly price updates: run `python ds_update_prices.py <file.csv>`, then rebuild aikasya.db.
+
+The lists below keep the shape app/database.py expects (INGREDIENTS_SEED, PRICES_SEED, RECIPES_SEED).
+Only the ACTIVE price per ingredient is seeded (same rule the Data Science engine uses).
+"""
+from typing import Any, Dict, List
+
+from app.budget_engine import DataStore, to_base
+
+_store = DataStore.from_json_dir()
+
+
+def _increment_in_base_units(ing: Dict[str, Any], price: Dict[str, Any]) -> float:
+    """Smallest amount a vendor sells, in the ingredient base unit (g / ml / piece)."""
+    inc = ing.get("default_purchase_increment")
+    if inc:
+        return float(inc)
+    if price.get("minimum_purchase_quantity"):
+        return float(to_base(price["minimum_purchase_quantity"], price["unit"], ing["base_unit"]))
+    return 0.0
+
 
 INGREDIENTS_SEED: List[Dict[str, Any]] = [
-    {"ingredient_id": "chicken", "canonical_name": "Chicken (Whole / Cuts)", "category": "meat", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["manok", "chicken cuts", "chicken breast"]},
-    {"ingredient_id": "pork_kasim", "canonical_name": "Pork (Kasim / Liempo)", "category": "meat", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["baboy", "pork", "kasim", "liempo"]},
-    {"ingredient_id": "ground_pork", "canonical_name": "Ground Pork (Giniling)", "category": "meat", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["giniling", "pork giniling"]},
-    {"ingredient_id": "beef_shank", "canonical_name": "Beef (Shank / Cuts)", "category": "meat", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["baka", "beef"]},
-    {"ingredient_id": "tilapia", "canonical_name": "Fresh Tilapia", "category": "seafood", "base_unit": "g", "default_purchase_increment": 500.0, "aliases": ["isda", "tilapia fish"]},
-    {"ingredient_id": "bangus", "canonical_name": "Milkfish (Bangus)", "category": "seafood", "base_unit": "g", "default_purchase_increment": 500.0, "aliases": ["bangus fish", "milkfish"]},
-    {"ingredient_id": "monggo_beans", "canonical_name": "Monggo Beans (Mung Beans)", "category": "vegetable", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["monggo", "munggo", "balatong"]},
-    {"ingredient_id": "talong", "canonical_name": "Eggplant (Talong)", "category": "vegetable", "base_unit": "piece", "default_purchase_increment": 1.0, "aliases": ["eggplant", "talong tagalog"]},
-    {"ingredient_id": "sitaw", "canonical_name": "String Beans (Sitaw)", "category": "vegetable", "base_unit": "bundle", "default_purchase_increment": 1.0, "aliases": ["string beans", "yardlong beans"]},
-    {"ingredient_id": "sayote", "canonical_name": "Chayote (Sayote)", "category": "vegetable", "base_unit": "piece", "default_purchase_increment": 1.0, "aliases": ["chayote"]},
-    {"ingredient_id": "kalabasa", "canonical_name": "Squash (Kalabasa)", "category": "vegetable", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["squash", "pumpkin"]},
-    {"ingredient_id": "kangkong", "canonical_name": "Water Spinach (Kangkong)", "category": "vegetable", "base_unit": "bundle", "default_purchase_increment": 1.0, "aliases": ["water spinach"]},
-    {"ingredient_id": "malunggay", "canonical_name": "Moringa Leaves (Malunggay)", "category": "vegetable", "base_unit": "bundle", "default_purchase_increment": 1.0, "aliases": ["moringa"]},
-    {"ingredient_id": "ampalaya", "canonical_name": "Bitter Gourd (Ampalaya)", "category": "vegetable", "base_unit": "piece", "default_purchase_increment": 1.0, "aliases": ["bitter melon"]},
-    {"ingredient_id": "kamatis", "canonical_name": "Fresh Tomato (Kamatis)", "category": "vegetable", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["tomatoes", "tomato"]},
-    {"ingredient_id": "sibuyas", "canonical_name": "Red Onion (Sibuyas)", "category": "vegetable", "base_unit": "g", "default_purchase_increment": 100.0, "aliases": ["onion", "onions"]},
-    {"ingredient_id": "bawang", "canonical_name": "Garlic (Bawang)", "category": "vegetable", "base_unit": "g", "default_purchase_increment": 100.0, "aliases": ["garlic"]},
-    {"ingredient_id": "luya", "canonical_name": "Ginger (Luya)", "category": "vegetable", "base_unit": "g", "default_purchase_increment": 100.0, "aliases": ["ginger"]},
-    {"ingredient_id": "sili_pansigang", "canonical_name": "Green Finger Pepper (Sili Pansigang)", "category": "vegetable", "base_unit": "piece", "default_purchase_increment": 3.0, "aliases": ["green chili", "sili haba"]},
-    {"ingredient_id": "gabi", "canonical_name": "Taro (Gabi)", "category": "vegetable", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["taro"]},
-    {"ingredient_id": "okra", "canonical_name": "Okra", "category": "vegetable", "base_unit": "piece", "default_purchase_increment": 5.0, "aliases": ["ladyfinger"]},
-    {"ingredient_id": "carrots", "canonical_name": "Carrots", "category": "vegetable", "base_unit": "piece", "default_purchase_increment": 1.0, "aliases": ["karot", "carrot"]},
-    {"ingredient_id": "patatas", "canonical_name": "Potatoes (Patatas)", "category": "vegetable", "base_unit": "piece", "default_purchase_increment": 2.0, "aliases": ["potato", "potatoes"]},
-    {"ingredient_id": "rice", "canonical_name": "White Rice (Bigas)", "category": "staple", "base_unit": "g", "default_purchase_increment": 1000.0, "aliases": ["bigas", "kanin"]},
-    {"ingredient_id": "egg", "canonical_name": "Chicken Egg (Itlog)", "category": "staple", "base_unit": "piece", "default_purchase_increment": 1.0, "aliases": ["itlog", "eggs"]},
-    {"ingredient_id": "cooking_oil", "canonical_name": "Cooking Oil (Mantika)", "category": "staple", "base_unit": "ml", "default_purchase_increment": 250.0, "aliases": ["mantika", "oil"]},
-    {"ingredient_id": "toyo", "canonical_name": "Soy Sauce (Toyo)", "category": "seasoning", "base_unit": "ml", "default_purchase_increment": 200.0, "aliases": ["soy sauce"]},
-    {"ingredient_id": "suka", "canonical_name": "Cane Vinegar (Suka)", "category": "seasoning", "base_unit": "ml", "default_purchase_increment": 200.0, "aliases": ["vinegar"]},
-    {"ingredient_id": "patis", "canonical_name": "Fish Sauce (Patis)", "category": "seasoning", "base_unit": "ml", "default_purchase_increment": 150.0, "aliases": ["fish sauce"]},
-    {"ingredient_id": "paminta", "canonical_name": "Black Peppercorn (Paminta)", "category": "seasoning", "base_unit": "g", "default_purchase_increment": 25.0, "aliases": ["pepper", "pamintang buo", "pamintang durog"]},
-    {"ingredient_id": "sinigang_mix", "canonical_name": "Tamarind Soup Base (Sinigang Mix)", "category": "seasoning", "base_unit": "piece", "default_purchase_increment": 1.0, "aliases": ["sinigang sampalok mix", "knorr sinigang"]},
-    {"ingredient_id": "gata", "canonical_name": "Coconut Milk (Gata / Pouch)", "category": "staple", "base_unit": "ml", "default_purchase_increment": 200.0, "aliases": ["kakang gata", "coconut milk"]},
-    {"ingredient_id": "asin", "canonical_name": "Iodized Salt (Asin)", "category": "seasoning", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["salt"]},
-    {"ingredient_id": "asukal", "canonical_name": "Brown Sugar (Asukal)", "category": "seasoning", "base_unit": "g", "default_purchase_increment": 250.0, "aliases": ["sugar"]},
-    {"ingredient_id": "dahon_ng_laurel", "canonical_name": "Bay Leaves (Dahon ng Laurel)", "category": "seasoning", "base_unit": "piece", "default_purchase_increment": 5.0, "aliases": ["bay leaf", "laurel"]},
-    {"ingredient_id": "macaroni", "canonical_name": "Elbow Macaroni", "category": "staple", "base_unit": "g", "default_purchase_increment": 200.0, "aliases": ["elbow macaroni pasta"]},
-    {"ingredient_id": "evaporated_milk", "canonical_name": "Evaporated Milk", "category": "staple", "base_unit": "piece", "default_purchase_increment": 1.0, "aliases": ["evap", "milk"]},
-]
-
-PRICES_SEED: List[Dict[str, Any]] = [
-    {"ingredient_id": "chicken", "amount_php": 220.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "pork_kasim", "amount_php": 340.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "ground_pork", "amount_php": 320.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Metro Manila Palengke Observed Average"},
-    {"ingredient_id": "beef_shank", "amount_php": 440.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Metro Manila Palengke Observed Average"},
-    {"ingredient_id": "tilapia", "amount_php": 160.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 500.0, "market_or_area": "Metro Manila Palengke", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "bangus", "amount_php": 220.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 500.0, "market_or_area": "Metro Manila Palengke", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "monggo_beans", "amount_php": 35.0, "quantity": 250.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Dry Goods Retail"},
-    {"ingredient_id": "talong", "amount_php": 10.0, "quantity": 1.0, "unit": "piece", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Retail Per Piece"},
-    {"ingredient_id": "sitaw", "amount_php": 25.0, "quantity": 1.0, "unit": "bundle", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Per Tali"},
-    {"ingredient_id": "sayote", "amount_php": 20.0, "quantity": 1.0, "unit": "piece", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Per Piece"},
-    {"ingredient_id": "kalabasa", "amount_php": 30.0, "quantity": 500.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Per Hiwa"},
-    {"ingredient_id": "kangkong", "amount_php": 15.0, "quantity": 1.0, "unit": "bundle", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Per Tali"},
-    {"ingredient_id": "malunggay", "amount_php": 10.0, "quantity": 1.0, "unit": "bundle", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Per Tali"},
-    {"ingredient_id": "ampalaya", "amount_php": 25.0, "quantity": 1.0, "unit": "piece", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Per Piece"},
-    {"ingredient_id": "kamatis", "amount_php": 70.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "sibuyas", "amount_php": 110.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 100.0, "market_or_area": "Metro Manila Palengke", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "bawang", "amount_php": 140.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 100.0, "market_or_area": "Metro Manila Palengke", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "luya", "amount_php": 120.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 100.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Retail"},
-    {"ingredient_id": "sili_pansigang", "amount_php": 10.0, "quantity": 3.0, "unit": "piece", "minimum_purchase_quantity": 3.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Retail"},
-    {"ingredient_id": "gabi", "amount_php": 30.0, "quantity": 250.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Retail"},
-    {"ingredient_id": "okra", "amount_php": 15.0, "quantity": 5.0, "unit": "piece", "minimum_purchase_quantity": 5.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Retail"},
-    {"ingredient_id": "carrots", "amount_php": 25.0, "quantity": 1.0, "unit": "piece", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Retail"},
-    {"ingredient_id": "patatas", "amount_php": 30.0, "quantity": 2.0, "unit": "piece", "minimum_purchase_quantity": 2.0, "market_or_area": "Metro Manila Palengke", "source_type": "demo_seed", "source_reference": "Palengke Retail"},
-    {"ingredient_id": "rice", "amount_php": 52.0, "quantity": 1000.0, "unit": "g", "minimum_purchase_quantity": 1000.0, "market_or_area": "Metro Manila Retail", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "egg", "amount_php": 9.0, "quantity": 1.0, "unit": "piece", "minimum_purchase_quantity": 1.0, "market_or_area": "Metro Manila Retail", "source_type": "official_reference", "source_reference": "DA Bantay Presyo Oct 2026 Reference"},
-    {"ingredient_id": "cooking_oil", "amount_php": 25.0, "quantity": 250.0, "unit": "ml", "minimum_purchase_quantity": 250.0, "market_or_area": "Sari-sari / Palengke Retail", "source_type": "demo_seed", "source_reference": "Tingi Pack Retail"},
-    {"ingredient_id": "toyo", "amount_php": 18.0, "quantity": 200.0, "unit": "ml", "minimum_purchase_quantity": 200.0, "market_or_area": "Sari-sari / Palengke Retail", "source_type": "demo_seed", "source_reference": "Pouch Pack Retail"},
-    {"ingredient_id": "suka", "amount_php": 15.0, "quantity": 200.0, "unit": "ml", "minimum_purchase_quantity": 200.0, "market_or_area": "Sari-sari / Palengke Retail", "source_type": "demo_seed", "source_reference": "Pouch Pack Retail"},
-    {"ingredient_id": "patis", "amount_php": 18.0, "quantity": 150.0, "unit": "ml", "minimum_purchase_quantity": 150.0, "market_or_area": "Sari-sari / Palengke Retail", "source_type": "demo_seed", "source_reference": "Small Bottle Retail"},
-    {"ingredient_id": "paminta", "amount_php": 10.0, "quantity": 25.0, "unit": "g", "minimum_purchase_quantity": 25.0, "market_or_area": "Sari-sari / Palengke Retail", "source_type": "demo_seed", "source_reference": "Sachet Retail"},
-    {"ingredient_id": "sinigang_mix", "amount_php": 18.0, "quantity": 1.0, "unit": "piece", "minimum_purchase_quantity": 1.0, "market_or_area": "Sari-sari / Palengke Retail", "source_type": "demo_seed", "source_reference": "20g Sachet Retail"},
-    {"ingredient_id": "gata", "amount_php": 35.0, "quantity": 200.0, "unit": "ml", "minimum_purchase_quantity": 200.0, "market_or_area": "Palengke / Sari-sari", "source_type": "demo_seed", "source_reference": "Pouch Pack Retail"},
-    {"ingredient_id": "asin", "amount_php": 15.0, "quantity": 250.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Retail", "source_type": "demo_seed", "source_reference": "Pack Retail"},
-    {"ingredient_id": "asukal", "amount_php": 22.0, "quantity": 250.0, "unit": "g", "minimum_purchase_quantity": 250.0, "market_or_area": "Retail", "source_type": "demo_seed", "source_reference": "Pack Retail"},
-    {"ingredient_id": "dahon_ng_laurel", "amount_php": 5.0, "quantity": 5.0, "unit": "piece", "minimum_purchase_quantity": 5.0, "market_or_area": "Retail", "source_type": "demo_seed", "source_reference": "Sachet Retail"},
-    {"ingredient_id": "macaroni", "amount_php": 25.0, "quantity": 200.0, "unit": "g", "minimum_purchase_quantity": 200.0, "market_or_area": "Retail", "source_type": "demo_seed", "source_reference": "Pack Retail"},
-    {"ingredient_id": "evaporated_milk", "amount_php": 30.0, "quantity": 1.0, "unit": "piece", "minimum_purchase_quantity": 1.0, "market_or_area": "Retail", "source_type": "demo_seed", "source_reference": "Small Can Retail"},
-]
-
-RECIPES_SEED: List[Dict[str, Any]] = [
     {
-        "recipe_id": "recipe-001",
-        "name": "Ginisang Monggo with Malunggay",
-        "category": "vegetable",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 30,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Adapted standard recipe, non-copyright curated instructions",
-        "steps": [
-            "Boil 200g monggo beans in 4 cups of water until soft and tender (approx. 25 minutes).",
-            "In a separate pan, saute minced garlic (20g), chopped onion (50g), and diced tomatoes (100g) in 15ml cooking oil.",
-            "Pour sauteed aromatics into the boiled monggo pot and simmer for 5 minutes.",
-            "Season with 15ml patis or salt to taste.",
-            "Turn off heat and stir in fresh malunggay leaves (1 bundle). Cover for 2 minutes before serving hot."
-        ],
-        "ingredients": [
-            {"ingredient_id": "monggo_beans", "name": "Monggo Beans", "quantity": 200.0, "unit": "g", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic (Bawang)", "quantity": 20.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion (Sibuyas)", "quantity": 50.0, "unit": "g", "optional": False},
-            {"ingredient_id": "kamatis", "name": "Tomatoes (Kamatis)", "quantity": 100.0, "unit": "g", "optional": False},
-            {"ingredient_id": "malunggay", "name": "Malunggay Leaves", "quantity": 1.0, "unit": "bundle", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "patis", "name": "Fish Sauce (Patis)", "quantity": 15.0, "unit": "ml", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-002",
-        "name": "Tortang Talong (Eggplant Omelet)",
-        "category": "egg_vegetable",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 15,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Everyday budget staple",
-        "steps": [
-            "Roast 4 whole eggplants over direct stove flame or grill until skins are charred.",
-            "Let cool, gently peel charred skin while keeping the stems intact.",
-            "Flatten the eggplant flesh gently with a fork.",
-            "Beat 4 eggs with a pinch of salt and black pepper in a shallow bowl.",
-            "Dip each flattened eggplant in beaten egg, then pan-fry in hot cooking oil (30ml) until golden brown on both sides."
-        ],
-        "ingredients": [
-            {"ingredient_id": "talong", "name": "Eggplant (Talong)", "quantity": 4.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "egg", "name": "Eggs (Itlog)", "quantity": 4.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 30.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "asin", "name": "Salt", "quantity": 5.0, "unit": "g", "optional": True},
-            {"ingredient_id": "paminta", "name": "Black Pepper", "quantity": 2.0, "unit": "g", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-003",
-        "name": "Adobong Sitaw",
-        "category": "vegetable",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 15,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Economical vegetable adobo",
-        "steps": [
-            "Cut string beans (sitaw) into 2-inch pieces.",
-            "Saute minced garlic (20g) and sliced onion (40g) in cooking oil (15ml) until fragrant.",
-            "Add sitaw and stir-fry for 2 minutes.",
-            "Pour in soy sauce (30ml) and vinegar (20ml). Simmer without stirring for 3 minutes.",
-            "Add 1/4 cup water, ground black pepper (2g), and simmer until sitaw is tender-crisp."
-        ],
-        "ingredients": [
-            {"ingredient_id": "sitaw", "name": "String Beans (Sitaw)", "quantity": 2.0, "unit": "bundle", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic (Bawang)", "quantity": 20.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 40.0, "unit": "g", "optional": False},
-            {"ingredient_id": "toyo", "name": "Soy Sauce", "quantity": 30.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "suka", "name": "Vinegar", "quantity": 20.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "paminta", "name": "Black Pepper", "quantity": 2.0, "unit": "g", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-004",
-        "name": "Ginisang Sayote with Egg",
-        "category": "vegetable",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 12,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Fast budget lunch/dinner",
-        "steps": [
-            "Peel and julienne 2 sayote (chayote).",
-            "Saute garlic (15g), onion (30g), and diced tomatoes (50g) in 15ml cooking oil.",
-            "Add sliced sayote and cook for 5 minutes until half-tender.",
-            "Pour 2 beaten eggs over the sayote and let set slightly, then scramble gently.",
-            "Season with salt or fish sauce to taste."
-        ],
-        "ingredients": [
-            {"ingredient_id": "sayote", "name": "Sayote (Chayote)", "quantity": 2.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "egg", "name": "Eggs", "quantity": 2.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic", "quantity": 15.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 30.0, "unit": "g", "optional": False},
-            {"ingredient_id": "kamatis", "name": "Tomatoes", "quantity": 50.0, "unit": "g", "optional": True},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "asin", "name": "Salt", "quantity": 5.0, "unit": "g", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-005",
-        "name": "Pritong Tilapia with Kamatis at Sibuyas",
-        "category": "seafood",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 15,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "High-protein fish staple",
-        "steps": [
-            "Clean and score 2 large tilapia fish (approx. 500g total), rub with 10g salt.",
-            "Heat 60ml cooking oil in a pan until hot.",
-            "Deep fry tilapia until skin is golden and crispy on both sides (6-7 mins per side).",
-            "Dice tomatoes (150g) and onions (50g), toss with a splash of fish sauce (patis) for side relish.",
-            "Serve crispy fish with side relish."
-        ],
-        "ingredients": [
-            {"ingredient_id": "tilapia", "name": "Fresh Tilapia", "quantity": 500.0, "unit": "g", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 60.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "kamatis", "name": "Tomatoes", "quantity": 150.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 50.0, "unit": "g", "optional": False},
-            {"ingredient_id": "asin", "name": "Salt", "quantity": 10.0, "unit": "g", "optional": False},
-        ]
-    },
-    {
-        "recipe_id": "recipe-006",
-        "name": "Classic Adobong Manok (Chicken Adobo)",
-        "category": "poultry",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 30,
-        "source_title": "Classic Filipino Recipe",
-        "source_url_or_note": "Standard pantry-friendly chicken adobo",
-        "steps": [
-            "Cut 500g chicken into serving pieces.",
-            "Marinate chicken in soy sauce (50ml), vinegar (30ml), crushed garlic (25g), and black pepper (3g) for 15 mins.",
-            "Heat 15ml cooking oil in a pot and brown chicken pieces lightly.",
-            "Pour marinade and add bay leaf (3 pcs). Bring to a simmer without stirring.",
-            "Cover and cook on low heat for 20 minutes until chicken is tender and sauce thickens."
-        ],
-        "ingredients": [
-            {"ingredient_id": "chicken", "name": "Chicken Cuts", "quantity": 500.0, "unit": "g", "optional": False},
-            {"ingredient_id": "toyo", "name": "Soy Sauce", "quantity": 50.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "suka", "name": "Vinegar", "quantity": 30.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic", "quantity": 25.0, "unit": "g", "optional": False},
-            {"ingredient_id": "dahon_ng_laurel", "name": "Bay Leaves", "quantity": 3.0, "unit": "piece", "optional": True},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "paminta", "name": "Black Pepper", "quantity": 3.0, "unit": "g", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-007",
-        "name": "Tinolang Manok with Sayote at Malunggay",
-        "category": "poultry",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 30,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Comforting ginger chicken soup",
-        "steps": [
-            "Saute ginger (30g), garlic (15g), and onion (40g) in 15ml cooking oil until fragrant.",
-            "Add 500g chicken cuts and cook until chicken turns opaque.",
-            "Add 20ml patis and pour 4 cups of water. Bring to a boil and simmer for 15 minutes.",
-            "Add wedges of sayote (1 pc) and simmer for 5 minutes until cooked.",
-            "Stir in malunggay leaves (1 bundle), turn off heat, cover and let wilt for 2 minutes."
-        ],
-        "ingredients": [
-            {"ingredient_id": "chicken", "name": "Chicken Cuts", "quantity": 500.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sayote", "name": "Sayote", "quantity": 1.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "malunggay", "name": "Malunggay Leaves", "quantity": 1.0, "unit": "bundle", "optional": False},
-            {"ingredient_id": "luya", "name": "Ginger (Luya)", "quantity": 30.0, "unit": "g", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic", "quantity": 15.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 40.0, "unit": "g", "optional": False},
-            {"ingredient_id": "patis", "name": "Fish Sauce (Patis)", "quantity": 20.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-        ]
-    },
-    {
-        "recipe_id": "recipe-008",
-        "name": "Ginataang Kalabasa at Sitaw",
-        "category": "vegetable",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 20,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Rich vegetable coconut curry",
-        "steps": [
-            "Saute garlic (15g) and onion (40g) in cooking oil (15ml).",
-            "Add 300g cubed kalabasa (squash) and 1 bundle sliced sitaw.",
-            "Pour coconut milk (200ml) and simmer gently on medium-low heat for 12-15 minutes until squash is tender.",
-            "Season with 15ml patis or salt and black pepper."
-        ],
-        "ingredients": [
-            {"ingredient_id": "kalabasa", "name": "Squash (Kalabasa)", "quantity": 300.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sitaw", "name": "String Beans (Sitaw)", "quantity": 1.0, "unit": "bundle", "optional": False},
-            {"ingredient_id": "gata", "name": "Coconut Milk (Gata)", "quantity": 200.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic", "quantity": 15.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 40.0, "unit": "g", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "patis", "name": "Fish Sauce (Patis)", "quantity": 15.0, "unit": "ml", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-009",
-        "name": "Sinigang na Bangus sa Sampalok",
-        "category": "seafood",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 20,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Classic sour tamarind soup",
-        "steps": [
-            "Boil 4 cups water with sliced tomatoes (100g) and onions (40g).",
-            "Add 500g sliced bangus (milkfish) and simmer for 8 minutes.",
-            "Stir in sinigang mix (1 pack) and green chili (sili pansigang 2 pcs).",
-            "Add kangkong leaves (1 bundle) and turn off heat after 1 minute."
-        ],
-        "ingredients": [
-            {"ingredient_id": "bangus", "name": "Milkfish (Bangus)", "quantity": 500.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sinigang_mix", "name": "Sinigang Mix", "quantity": 1.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "kangkong", "name": "Kangkong", "quantity": 1.0, "unit": "bundle", "optional": False},
-            {"ingredient_id": "kamatis", "name": "Tomatoes", "quantity": 100.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 40.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sili_pansigang", "name": "Green Finger Pepper", "quantity": 2.0, "unit": "piece", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-010",
-        "name": "Sinigang na Baboy (Pork Sinigang)",
-        "category": "meat",
-        "base_servings": 4,
-        "prep_minutes": 15,
-        "cook_minutes": 45,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Hearty tamarind pork soup",
-        "steps": [
-            "Boil 500g pork kasim in 5 cups water with onions (50g) and tomatoes (100g) until tender (approx. 35 mins).",
-            "Add sliced gabi (150g) to thicken broth.",
-            "Pour sinigang mix (1 pack) and add finger pepper (2 pcs) and okra (5 pcs).",
-            "Add kangkong (1 bundle), simmer 1 minute, and turn off heat."
-        ],
-        "ingredients": [
-            {"ingredient_id": "pork_kasim", "name": "Pork (Kasim)", "quantity": 500.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sinigang_mix", "name": "Sinigang Mix", "quantity": 1.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "kangkong", "name": "Kangkong", "quantity": 1.0, "unit": "bundle", "optional": False},
-            {"ingredient_id": "kamatis", "name": "Tomatoes", "quantity": 100.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 50.0, "unit": "g", "optional": False},
-            {"ingredient_id": "gabi", "name": "Taro (Gabi)", "quantity": 150.0, "unit": "g", "optional": True},
-            {"ingredient_id": "okra", "name": "Okra", "quantity": 5.0, "unit": "piece", "optional": True},
-            {"ingredient_id": "patis", "name": "Fish Sauce (Patis)", "quantity": 15.0, "unit": "ml", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-011",
-        "name": "Ginisang Ampalaya with Egg",
-        "category": "vegetable",
-        "base_servings": 4,
-        "prep_minutes": 15,
-        "cook_minutes": 10,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Nutritious sauteed bitter melon",
-        "steps": [
-            "Thinly slice 1 ampalaya, massage with salt for 3 minutes, then rinse thoroughly to reduce bitterness.",
-            "Saute garlic (15g), onion (30g), and tomatoes (80g) in cooking oil (15ml).",
-            "Add ampalaya and stir-fry for 3-4 minutes.",
-            "Pour 2 beaten eggs over the vegetable, allow to set, then gently scramble.",
-            "Season with salt and pepper to taste."
-        ],
-        "ingredients": [
-            {"ingredient_id": "ampalaya", "name": "Bitter Gourd (Ampalaya)", "quantity": 1.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "egg", "name": "Eggs", "quantity": 2.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "kamatis", "name": "Tomatoes", "quantity": 80.0, "unit": "g", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic", "quantity": 15.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 30.0, "unit": "g", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "asin", "name": "Salt", "quantity": 5.0, "unit": "g", "optional": True},
-        ]
-    },
-    {
-        "recipe_id": "recipe-012",
-        "name": "Filipino Chicken Sopas",
-        "category": "soup_staple",
-        "base_servings": 4,
-        "prep_minutes": 10,
-        "cook_minutes": 25,
-        "source_title": "Traditional Filipino Home Cooking",
-        "source_url_or_note": "Warm comforting chicken macaroni soup",
-        "steps": [
-            "Saute garlic (15g) and onion (30g) in 15ml cooking oil.",
-            "Add shredded boiled chicken (200g) and cook for 2 minutes.",
-            "Add elbow macaroni (150g) and 4 cups of chicken broth or water.",
-            "Simmer for 10-12 minutes until macaroni is cooked.",
-            "Pour in evaporated milk (1 can / 150ml) and diced carrots (1 pc). Simmer for 2 minutes and season with salt and pepper."
-        ],
-        "ingredients": [
-            {"ingredient_id": "chicken", "name": "Chicken", "quantity": 200.0, "unit": "g", "optional": False},
-            {"ingredient_id": "macaroni", "name": "Elbow Macaroni", "quantity": 150.0, "unit": "g", "optional": False},
-            {"ingredient_id": "evaporated_milk", "name": "Evaporated Milk", "quantity": 1.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "carrots", "name": "Carrots", "quantity": 1.0, "unit": "piece", "optional": False},
-            {"ingredient_id": "bawang", "name": "Garlic", "quantity": 15.0, "unit": "g", "optional": False},
-            {"ingredient_id": "sibuyas", "name": "Red Onion", "quantity": 30.0, "unit": "g", "optional": False},
-            {"ingredient_id": "cooking_oil", "name": "Cooking Oil", "quantity": 15.0, "unit": "ml", "optional": False},
-            {"ingredient_id": "patis", "name": "Fish Sauce (Patis)", "quantity": 15.0, "unit": "ml", "optional": True},
-        ]
+        "ingredient_id": iid,
+        "canonical_name": ing["canonical_name"],
+        "aliases": ing.get("aliases", []),
+        "category": ing["category"],
+        "base_unit": ing["base_unit"],
+        "default_purchase_increment": float(ing.get("default_purchase_increment") or 0),
+        "storage_notes": ing.get("storage_notes", ""),
     }
+    for iid, ing in _store.ingredients.items()
 ]
+
+PRICES_SEED: List[Dict[str, Any]] = []
+for _iid, _ing in _store.ingredients.items():
+    _p = _store.active_price(_iid)
+    if _p is None:
+        continue  # never invent a price; the engine reports the recipe as unpriced
+    PRICES_SEED.append({
+        "ingredient_id": _iid,
+        "amount_php": float(_p["amount_php"]),
+        "quantity": float(_p["quantity"]),
+        "unit": _p["unit"],
+        "minimum_purchase_quantity": _increment_in_base_units(_ing, _p),
+        "market_or_area": _p.get("market_or_area") or "",
+        "observed_at": str(_p.get("observed_at"))[:10],
+        "source_type": _p["source_type"],
+        "source_reference": _p.get("source_reference", ""),
+    })
+
+RECIPES_SEED: List[Dict[str, Any]] = []
+for _r in _store.recipes.values():
+    _lines = []
+    for _line in _r["ingredients"]:
+        _lines.append({
+            "ingredient_id": _line["ingredient_id"],
+            "name": _store.ingredients[_line["ingredient_id"]]["canonical_name"],
+            "quantity": float(_line["quantity"]),
+            "unit": _line["unit"],
+            "optional": bool(_line.get("optional", False)),
+            "substitutions": [s["ingredient_id"] for s in _line.get("substitutions") or []],
+            **({"note": _line["note"]} if _line.get("note") else {}),
+        })
+    RECIPES_SEED.append({
+        "recipe_id": _r["recipe_id"],
+        "name": _r["name"],
+        "category": _r["category"],
+        "meal_types": _r.get("meal_types", []),
+        "base_servings": int(_r["base_servings"]),
+        "prep_minutes": int(_r["prep_minutes"]),
+        "cook_minutes": int(_r["cook_minutes"]),
+        "source_title": _r.get("source_title", ""),
+        "source_url_or_note": _r.get("source_url_or_note", ""),
+        "rights_status": _r.get("rights_status", ""),
+        "steps": list(_r["steps"]),
+        "ingredients": _lines,
+    })

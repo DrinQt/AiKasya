@@ -19,8 +19,8 @@ def test_frontend_plan_recipe_pantry_and_price_contract():
     with TestClient(app) as client:
         ingredients = client.get("/api/ingredients")
         assert ingredients.status_code == 200
-        assert any(item["ingredient_id"] == "egg" for item in ingredients.json())
-        stock = client.post("/api/pantry/upsert", json={"ingredient_id": "egg", "quantity": 6, "unit": "piece"})
+        assert any(item["ingredient_id"] == "eggs" for item in ingredients.json())
+        stock = client.post("/api/pantry/upsert", json={"ingredient_id": "eggs", "quantity": 6, "unit": "piece"})
         assert stock.status_code == 200
         assert client.get("/api/pantry").json()[0]["quantity"] == 6
         plan = client.post("/api/plans/generate", json={"budget_php": 500, "servings": 3, "meal_scope": "single_meal", "pantry": []})

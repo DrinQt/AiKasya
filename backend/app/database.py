@@ -59,7 +59,8 @@ def init_db():
         ingredients_json TEXT NOT NULL,
         source_title TEXT,
         source_url_or_note TEXT,
-        rights_status TEXT
+        rights_status TEXT,
+        meal_types TEXT
     );
 
     CREATE TABLE IF NOT EXISTS pantry (
@@ -87,6 +88,11 @@ def init_db():
         shopping_status TEXT NOT NULL
     );
     """)
+
+    # migration for databases created before meal_types existed
+    existing_cols = {row[1] for row in cursor.execute("PRAGMA table_info(recipes)").fetchall()}
+    if "meal_types" not in existing_cols:
+        cursor.execute("ALTER TABLE recipes ADD COLUMN meal_types TEXT")
 
     conn.commit()
     conn.close()
@@ -143,7 +149,7 @@ def seed_if_empty():
                     norm_price,
                     pr.get("minimum_purchase_quantity", 0.0),
                     pr["market_or_area"],
-                    "2026-10-09",
+                    pr.get("observed_at", "2026-10-09"),
                     pr["source_type"],
                     pr.get("source_reference", ""),
                     1 if pr["source_type"] == "official_reference" else 0,
@@ -157,9 +163,9 @@ def seed_if_empty():
                 """
                 INSERT INTO recipes (
                     recipe_id, name, category, base_servings, prep_minutes, cook_minutes,
-                    steps, ingredients_json, source_title, source_url_or_note, rights_status
+                    steps, ingredients_json, source_title, source_url_or_note, rights_status, meal_types
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     rc["recipe_id"],
@@ -173,6 +179,7 @@ def seed_if_empty():
                     rc.get("source_title", "Filipino Recipe"),
                     rc.get("source_url_or_note", ""),
                     rc.get("rights_status", "curated_original"),
+                    json.dumps(rc.get("meal_types", [])),
                 ),
             )
 
@@ -198,6 +205,7 @@ def get_all_recipes_db() -> List[Dict[str, Any]]:
             "ingredients": json.loads(r["ingredients_json"]),
             "source_title": r["source_title"],
             "source_url_or_note": r["source_url_or_note"],
+            "meal_types": json.loads(r["meal_types"]) if "meal_types" in r.keys() and r["meal_types"] else [],
         })
     conn.close()
     return recipes
@@ -222,6 +230,7 @@ def get_recipe_by_id_db(recipe_id: str) -> Optional[Dict[str, Any]]:
         "ingredients": json.loads(r["ingredients_json"]),
         "source_title": r["source_title"],
         "source_url_or_note": r["source_url_or_note"],
+        "meal_types": json.loads(r["meal_types"]) if "meal_types" in r.keys() and r["meal_types"] else [],
     }
 
 
@@ -273,6 +282,11 @@ def upsert_price_db(
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     price_id = f"pr-{uuid.uuid4().hex[:8]}"
 
+    # Keep the vendor selling step (e.g. 250 g, 350 ml bottle) when a user updates only the price.
+    cursor.execute("SELECT default_purchase_increment FROM ingredients WHERE ingredient_id = ?", (ingredient_id,))
+    inc_row = cursor.fetchone()
+    purchase_increment = float(inc_row["default_purchase_increment"] or 0.0) if inc_row else 0.0
+
     cursor.execute(
         """
         INSERT INTO prices (
@@ -289,7 +303,7 @@ def upsert_price_db(
             quantity,
             unit,
             norm_price,
-            0.0,
+            purchase_increment,
             market_or_area,
             now_str,
             source_type,

@@ -45,6 +45,10 @@ def evaluate_recipe_affordability(
 
         pantry_qty, pantry_unit = pantry_map.get(ing_id, (0.0, req_unit))
 
+        if is_optional and pantry_qty <= 0:
+            warnings.append(f"Optional, not included in cost: {ing_name}.")
+            continue
+
         price_info = prices_map.get(ing_id)
         if not price_info:
             if is_optional:
@@ -128,7 +132,13 @@ def plan_budget_to_meals(
     feasible_options: List[RecipeOption] = []
     unaffordable_options: List[Tuple[RecipeOption, float]] = []
 
+    wanted_meal = (request.meal_type or "").strip().lower() or None
+    wanted_meal = {"merienda": "snack", "meryenda": "snack"}.get(wanted_meal, wanted_meal)
+
     for recipe in all_recipes:
+        recipe_meals = recipe.get("meal_types") or []
+        if wanted_meal and recipe_meals and wanted_meal not in recipe_meals:
+            continue
         if request.max_prep_minutes is not None:
             total_time = recipe.get("prep_minutes", 0) + recipe.get("cook_minutes", 0)
             if total_time > request.max_prep_minutes:

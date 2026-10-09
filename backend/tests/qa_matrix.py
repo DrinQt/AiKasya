@@ -98,7 +98,7 @@ def run_qa_suite():
         "meal_type": "dinner",
         "pantry": [
             {"ingredient_id": "rice", "quantity": 1000.0, "unit": "g"},
-            {"ingredient_id": "bawang", "quantity": 100.0, "unit": "g"},
+            {"ingredient_id": "garlic", "quantity": 100.0, "unit": "g"},
         ],
         "excluded_ingredient_ids": [],
     }
@@ -205,7 +205,7 @@ def run_qa_suite():
 
     # Reprice Pritong Tilapia
     reprice_req = {
-        "recipe_id": "recipe-005",
+        "recipe_id": "pritong-tilapia",
         "budget_php": 200.0,
         "servings": 4,
         "pantry": [],
@@ -214,10 +214,10 @@ def run_qa_suite():
     assert res.status_code == 200
     reprice_opt = res.json()
     tilapia_item = next(item for item in reprice_opt["items_to_buy"] if item["ingredient_id"] == "tilapia")
-    # 500g at PHP195/kg = PHP97.50
-    assert tilapia_item["cost_php"] == 97.5, f"Expected 97.50, got {tilapia_item['cost_php']}"
+    # recipe needs 800 g for 4; tilapia is sold in 250 g steps -> buy 1000 g at PHP195/kg = PHP195.00
+    assert tilapia_item["cost_php"] == 195.0, f"Expected 195.00, got {tilapia_item['cost_php']}"
     print(f"[PASS] QA-9: Dynamic Market Repricing (Tilapia updated to PHP195/kg)")
-    print(f"       Recalculated Pritong Tilapia: 500g = PHP{tilapia_item['cost_php']} (Source: {tilapia_item['price_source_type']})")
+    print(f"       Recalculated Pritong Tilapia: 1 kg = PHP{tilapia_item['cost_php']} (Source: {tilapia_item['price_source_type']})")
     passed += 1
 
     # -------------------------------------------------------------

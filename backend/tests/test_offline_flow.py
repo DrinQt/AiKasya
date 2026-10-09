@@ -51,7 +51,7 @@ def test_budget_to_meal_optimizer_primary_demo():
         meal_type="dinner",
         pantry=[
             PantryInputItem(ingredient_id="rice", quantity=1000.0, unit="g"),
-            PantryInputItem(ingredient_id="bawang", quantity=100.0, unit="g"),
+            PantryInputItem(ingredient_id="garlic", quantity=100.0, unit="g"),
         ],
         excluded_ingredient_ids=[],
     )
