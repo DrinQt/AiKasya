@@ -41,7 +41,16 @@ export default function AIChat({
   const send = async (prompt = draft, constraints?: Interpretation) => {
     const text = prompt.trim();
     if (!text || pending) return;
-    // Suggestion buttons change the shared Home settings; ordinary chat uses them.
+    const budgetMatch =
+      text.match(/(\d+(?:\.\d+)?)\s*(?:budget|pesos?|php)/i) ??
+      text.match(/(?:budget|php|₱)\s*(?:of\s*)?(\d+(?:\.\d+)?)/i);
+    const daysMatch = text.match(/(\d+)\s*(?:days?\b|araw\b)/i);
+    const peopleMatch = text.match(
+      /(\d+)\s*(?:people|persons?|servings?|tao|pax)\b/i,
+    );
+    const amount = budgetMatch ? Number(budgetMatch[1]) : state.budget;
+    const days = daysMatch ? Number(daysMatch[1]) : state.days;
+    const people = peopleMatch ? Number(peopleMatch[1]) : state.people;
     const planningState = constraints
       ? {
           ...state,
@@ -49,12 +58,18 @@ export default function AIChat({
             (constraints.budget_php ?? state.budget / state.days) * state.days,
           people: constraints.servings ?? state.people,
         }
-      : state;
+      : {
+          ...state,
+          budget: amount > 0 && amount <= 10000000 ? amount : state.budget,
+          days: days >= 1 && days <= 30 ? days : state.days,
+          people: people >= 1 && people <= 20 ? people : state.people,
+        };
     const userId = crypto.randomUUID();
     setState((s) => ({
       ...s,
       budget: planningState.budget,
       people: planningState.people,
+      days: planningState.days,
       messages: [...s.messages, { id: userId, role: "user", text }],
     }));
     setDraft("");
@@ -66,8 +81,8 @@ export default function AIChat({
         (await api<Interpretation>("/agent/interpret", {
           message: text,
           existing_constraints: {
-            budget_php: state.budget / state.days,
-            servings: state.people,
+            budget_php: planningState.budget / planningState.days,
+            servings: planningState.people,
           },
         }));
       const interpreted = {
