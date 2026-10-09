@@ -1,0 +1,9 @@
+{
+  "name": "aikasya-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "node \"front end/scripts/dev.mjs\"",
+    "build": "npm --prefix \"front end\" run build",
+    "test": "npm --prefix \"front end\" test"
+  }
+}
