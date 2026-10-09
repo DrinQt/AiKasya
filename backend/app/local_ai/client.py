@@ -6,7 +6,7 @@ from app.local_ai.prompts import SYSTEM_PROMPT_INTERPRET
 from app.local_ai.parser import parse_and_validate_llm_json, rule_assisted_taglish_fallback
 
 OLLAMA_BASE_URL = "http://127.0.0.1:11434"
-DEFAULT_MODEL = "qwen2.5:1.5b"
+DEFAULT_MODEL = "llama3.2:3b"
 
 
 async def check_ollama_status() -> Dict[str, Any]:
@@ -16,10 +16,11 @@ async def check_ollama_status() -> Dict[str, Any]:
             if resp.status_code == 200:
                 data = resp.json()
                 models = [m.get("name") for m in data.get("models", [])]
+                active = DEFAULT_MODEL if any(DEFAULT_MODEL in m for m in models) else (models[0] if models else DEFAULT_MODEL)
                 return {
                     "running": True,
                     "models": models,
-                    "active_model": models[0] if models else DEFAULT_MODEL,
+                    "active_model": active,
                 }
     except Exception:
         pass
@@ -51,10 +52,21 @@ async def interpret_user_request(
                 raw_response = resp.json().get("response", "")
                 parsed = parse_and_validate_llm_json(raw_response)
                 if parsed:
-                    if parsed.budget_php is None:
-                        fb = rule_assisted_taglish_fallback(message)
+                    fb = rule_assisted_taglish_fallback(message, existing_constraints)
+                    if parsed.budget_php is None or "budget_php" in parsed.missing_required_fields or (any(w in message.lower() for w in ["daan", "libo"]) and fb.budget_php is not None):
                         if fb.budget_php is not None:
                             parsed.budget_php = fb.budget_php
+
+                    if parsed.servings is None:
+                        parsed.servings = fb.servings
+
+                    if fb.excluded_ingredients and not parsed.excluded_ingredients:
+                        parsed.excluded_ingredients = fb.excluded_ingredients
+
+                    if fb.pantry_mentions:
+                        for pm in fb.pantry_mentions:
+                            if pm not in parsed.pantry_mentions:
+                                parsed.pantry_mentions.append(pm)
 
                     if parsed.budget_php is not None:
                         parsed.missing_required_fields = [f for f in parsed.missing_required_fields if f != "budget_php"]

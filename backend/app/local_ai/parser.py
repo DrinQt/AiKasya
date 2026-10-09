@@ -12,10 +12,58 @@ def clean_json_string(raw: str) -> str:
     return raw
 
 
+PANTRY_NORMALIZATION_MAP = {
+    "kanin": "rice",
+    "bigas": "rice",
+    "rice": "rice",
+    "bawang": "garlic",
+    "garlic": "garlic",
+    "sibuyas": "onion",
+    "onion": "onion",
+    "onions": "onion",
+    "toyo": "soy sauce",
+    "soy sauce": "soy sauce",
+    "suka": "vinegar",
+    "vinegar": "vinegar",
+    "mantika": "cooking oil",
+    "oil": "cooking oil",
+    "cooking oil": "cooking oil",
+    "patis": "fish sauce",
+    "fish sauce": "fish sauce",
+    "asin": "salt",
+    "salt": "salt",
+    "paminta": "pepper",
+    "pepper": "pepper",
+    "asukal": "sugar",
+    "sugar": "sugar",
+    "itlog": "egg",
+    "egg": "egg",
+    "eggs": "egg",
+}
+
+
+def normalize_pantry_item(item: str) -> str:
+    cleaned = item.lower().strip()
+    return PANTRY_NORMALIZATION_MAP.get(cleaned, cleaned)
+
+
 def parse_and_validate_llm_json(raw_text: str) -> Optional[AgentInterpretResponse]:
     try:
         cleaned = clean_json_string(raw_text)
         data = json.loads(cleaned)
+        if isinstance(data, dict):
+            mt = str(data.get("meal_type") or "").lower()
+            if mt in ["merienda", "meryenda", "miryenda", "snack"]:
+                data["meal_type"] = "snack"
+            elif mt in ["any", "all", "none"]:
+                data["meal_type"] = None
+            if "pantry_mentions" in data and isinstance(data["pantry_mentions"], list):
+                norm_pantry = []
+                for p in data["pantry_mentions"]:
+                    norm = normalize_pantry_item(str(p))
+                    if norm not in norm_pantry:
+                        norm_pantry.append(norm)
+                data["pantry_mentions"] = norm_pantry
         return AgentInterpretResponse(**data)
     except Exception:
         return None
@@ -75,34 +123,39 @@ def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[
         budget_php = constraints.get("budget_php")
 
     servings: int = constraints.get("servings") or 4
+    found_digit = False
     servings_patterns = [
         r"(?:ng|para sa|good for|for)\s*(\d+)\s*(?:tao|person|persons|people|pax)?",
-        r"(?:dalawa|tatlo|apat|lima|anim|pito|walo|siyam|sampu)\s*(?:kami|tao)?",
-        r"(\d+)\s*(?:katao|pax|people)",
+        r"(\d+)\s*(?:katao|pax|people|tao|person|persons)",
     ]
-    word_to_num = {
-        "dalawa": 2, "tatlo": 3, "apat": 4, "lima": 5, "anim": 6,
-        "pito": 7, "walo": 8, "siyam": 9, "sampu": 10,
-    }
-    for w, val in word_to_num.items():
-        if w in msg:
-            servings = val
-            break
-    else:
-        for pattern in servings_patterns:
-            m = re.search(pattern, msg)
-            if m and m.group(1):
-                try:
-                    servings = int(m.group(1))
-                    break
-                except ValueError:
-                    pass
+    for pattern in servings_patterns:
+        m = re.search(pattern, msg)
+        if m and m.group(1):
+            try:
+                servings = int(m.group(1))
+                found_digit = True
+                break
+            except ValueError:
+                pass
+
+    if not found_digit:
+        word_to_num = {
+            "dalawa": 2, "tatlo": 3, "apat": 4, "lima": 5, "anim": 6,
+            "pito": 7, "walo": 8, "siyam": 9, "sampu": 10,
+        }
+        for w, val in word_to_num.items():
+            # Match word boundary and ignore if it is part of 'daan'
+            if re.search(rf"\b{w}\b(?!\s*ng\s+daan)(?!ng\s+daan)", msg):
+                servings = val
+                break
 
     meal_type = "dinner"
     if any(k in msg for k in ["almusal", "breakfast", "agahan"]):
         meal_type = "breakfast"
     elif any(k in msg for k in ["tanghalian", "lunch"]):
         meal_type = "lunch"
+    elif any(k in msg for k in ["merienda", "meryenda", "snack", "miryenda"]):
+        meal_type = "snack"
     elif any(k in msg for k in ["hapunan", "dinner"]):
         meal_type = "dinner"
 
