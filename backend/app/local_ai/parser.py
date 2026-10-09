@@ -37,19 +37,38 @@ def rule_assisted_taglish_fallback(message: str) -> AgentInterpretResponse:
         intent = "adjust_budget"
 
     budget_php: Optional[float] = None
-    budget_patterns = [
-        r"[₱p]?\s*(\d+(?:\.\d+)?)\s*(?:pesos|peso|php|budget|lang|para sa)",
-        r"(?:budget(?:\s*ng)?|may|meron(?:g)?)\s*[₱p]?\s*(\d+(?:\.\d+)?)",
-        r"[₱](\d+(?:\.\d+)?)",
-    ]
-    for pattern in budget_patterns:
-        match = re.search(pattern, msg)
-        if match:
-            try:
-                budget_php = float(match.group(1))
-                break
-            except ValueError:
-                pass
+    tagalog_budget_words = {
+        "isang daan": 100.0,
+        "isang daang": 100.0,
+        "dalawang daan": 200.0,
+        "dalawang daang": 200.0,
+        "tatlong daan": 300.0,
+        "tatlong daang": 300.0,
+        "apat na raan": 400.0,
+        "apat na daan": 400.0,
+        "limang daan": 500.0,
+        "limang daang": 500.0,
+        "isang libo": 1000.0,
+    }
+    for phrase, val in tagalog_budget_words.items():
+        if phrase in msg:
+            budget_php = val
+            break
+
+    if budget_php is None:
+        budget_patterns = [
+            r"[₱p]?\s*(\d+(?:\.\d+)?)\s*(?:pesos|peso|php|budget|lang|para sa)",
+            r"(?:budget(?:\s*ng)?|may|meron(?:g)?)\s*[₱p]?\s*(\d+(?:\.\d+)?)",
+            r"[₱](\d+(?:\.\d+)?)",
+        ]
+        for pattern in budget_patterns:
+            match = re.search(pattern, msg)
+            if match:
+                try:
+                    budget_php = float(match.group(1))
+                    break
+                except ValueError:
+                    pass
 
     servings: int = 4
     servings_patterns = [
