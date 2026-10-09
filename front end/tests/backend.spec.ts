@@ -118,7 +118,7 @@ test("Chat uses shared settings rather than unrelated interpretation defaults", 
   );
   await page.getByRole("textbox").fill("Plan dinner");
   await page.getByRole("button", { name: "Send message" }).click();
-  expect((await request).postDataJSON().budget_php).toBeCloseTo(500 / 3);
+  expect((await request).postDataJSON().budget_php).toBe(500);
   await expect(page.getByRole("heading", { name: "Egg meal" })).toBeVisible();
   await page.getByRole("button", { name: "View Details" }).click();
   await expect(page.getByText("Cook the eggs.")).toBeVisible();
@@ -256,7 +256,7 @@ test("Updated Home people and days are used in the next chat request", async ({
   );
   await page.getByRole("button", { name: "Send message" }).click();
   expect((await request).postDataJSON()).toMatchObject({
-    budget_php: 250,
+    budget_php: 500,
     servings: 2,
   });
 });
@@ -286,3 +286,28 @@ test("Typed budget and days update Home before calculating chat meals", async ({
     page.getByRole("combobox", { name: "Number of days" }),
   ).toHaveValue("1");
 });
+
+for (const prompt of ["2000 budget, 3 days", "2000"]) {
+  test(`Chat keeps the full entered budget: ${prompt}`, async ({ page }) => {
+    await mockBackend(page);
+    await page.route("**/api/plans/generate", (route) => {
+      const budget = route.request().postDataJSON().budget_php;
+      return route.fulfill({ json: {
+        ...plan, budget_php: budget,
+        options: [{ ...option, remaining_php: budget - option.estimated_total_php }],
+      } });
+    });
+    await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+    await page.getByRole("textbox").fill(prompt);
+    const request = page.waitForRequest(r => r.url().endsWith("/api/plans/generate"));
+    await page.getByRole("button", { name: "Send message" }).click();
+    expect((await request).postDataJSON().budget_php).toBe(2000);
+    await expect(page.getByText(/Your total budget is ₱2,000.00/)).toBeVisible();
+    await expect(page.getByText("Remaining: PHP 1958.00")).toBeVisible();
+    await page.getByRole("button", { name: "Close chat" }).click();
+    await expect(page.getByRole("button", { name: "₱2,000 My Budget" })).toBeVisible();
+    await expect(page.getByRole("combobox", { name: "Number of days" })).toHaveValue("3");
+    await page.reload();
+    await expect(page.getByRole("button", { name: "₱2,000 My Budget" })).toBeVisible();
+  });
+}

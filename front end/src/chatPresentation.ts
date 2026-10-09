@@ -16,8 +16,8 @@ export function planReply(plan: Plan, language: "en" | "fil") {
     }).format(value);
   if (plan.options.length)
     return language === "fil"
-      ? `Heto ang mga pagkain na kasya sa ${money(plan.budget_php)}.`
-      : `Here are meals within ${money(plan.budget_php)}.`;
+      ? `Ang kabuuang badyet mo ay ${money(plan.budget_php)}. Pumili ng isang pagkain sa mga opsyon sa ibaba; hindi ito buong menu para sa isang araw.`
+      : `Your total budget is ${money(plan.budget_php)}. Choose one meal from the options below; these are alternatives for one meal, not a full daily menu.`;
   const closest = closestMeal(plan);
   if (closest)
     return language === "fil"

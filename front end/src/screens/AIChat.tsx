@@ -43,7 +43,8 @@ export default function AIChat({
     if (!text || pending) return;
     const budgetMatch =
       text.match(/(\d+(?:\.\d+)?)\s*(?:budget|pesos?|php)/i) ??
-      text.match(/(?:budget|php|₱)\s*(?:of\s*)?(\d+(?:\.\d+)?)/i);
+      text.match(/(?:budget|php|₱)\s*(?:of\s*)?(\d+(?:\.\d+)?)/i) ??
+      text.match(/^\s*(\d+(?:\.\d+)?)\s*$/);
     const daysMatch = text.match(/(\d+)\s*(?:days?\b|araw\b)/i);
     const peopleMatch = text.match(
       /(\d+)\s*(?:people|persons?|servings?|tao|pax)\b/i,
@@ -55,7 +56,7 @@ export default function AIChat({
       ? {
           ...state,
           budget:
-            (constraints.budget_php ?? state.budget / state.days) * state.days,
+            constraints.budget_php ?? state.budget,
           people: constraints.servings ?? state.people,
         }
       : {
@@ -81,13 +82,13 @@ export default function AIChat({
         (await api<Interpretation>("/agent/interpret", {
           message: text,
           existing_constraints: {
-            budget_php: planningState.budget / planningState.days,
+            budget_php: planningState.budget,
             servings: planningState.people,
           },
         }));
       const interpreted = {
         ...parsed,
-        budget_php: planningState.budget / planningState.days,
+        budget_php: planningState.budget,
         servings: planningState.people,
         clarification_question:
           parsed.clarification_question &&
@@ -114,7 +115,7 @@ export default function AIChat({
       } else {
         const result = await generatePlan(
           planningState,
-          planningState.budget / planningState.days,
+          planningState.budget,
           interpreted,
         );
         reply = {
