@@ -1,4 +1,5 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
+import { api, savePantry } from "../api";
 import { Plus, Check, X, Sparkles } from "lucide-react";
 import { Button, MascotTip, type T } from "../components";
 import type { State } from "../state";
@@ -13,11 +14,72 @@ export default function Pantry({
   t: T;
   onSuggest: () => void;
 }) {
+  const [syncing, setSyncing] = useState(false);
+  const [syncNotice, setSyncNotice] = useState("");
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
   return (
     <main className="screen-content pantry-content">
+      <div className="backend-actions">
+        <Button
+          disabled={syncing}
+          onClick={() => {
+            setSyncing(true);
+            setSyncNotice("");
+            void savePantry(state)
+              .then(() => setSyncNotice("Pantry saved to the local backend."))
+              .catch((error) =>
+                setSyncNotice(
+                  error instanceof Error
+                    ? error.message
+                    : "Could not save pantry. Your device copy is unchanged.",
+                ),
+              )
+              .finally(() => setSyncing(false));
+          }}
+        >
+          Save pantry to backend
+        </Button>
+        <Button
+          disabled={syncing}
+          onClick={() => {
+            setSyncing(true);
+            setSyncNotice("");
+            void api<
+              {
+                ingredient_id: string;
+                name: string;
+                quantity: number;
+                unit: string;
+              }[]
+            >("/pantry")
+              .then((items) => {
+                setState((s) => ({
+                  ...s,
+                  pantry: items
+                    .filter((item) => item.quantity > 0)
+                    .map((item) => ({
+                      id: item.ingredient_id,
+                      name: item.name,
+                      quantity: `${item.quantity} ${item.unit}`,
+                      emoji: "\u{1F96C}",
+                    })),
+                }));
+                setSyncNotice("Loaded the local backend pantry.");
+              })
+              .catch(() =>
+                setSyncNotice(
+                  "Could not load the local pantry. Your device copy is unchanged.",
+                ),
+              )
+              .finally(() => setSyncing(false));
+          }}
+        >
+          Load backend pantry
+        </Button>
+      </div>
+      {syncNotice && <p role="status">{syncNotice}</p>}
       <section>
         <h2 className="pantry-heading">{t("have")}</h2>
         {state.pantry.length === 0 && (
