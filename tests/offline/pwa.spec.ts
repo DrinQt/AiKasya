@@ -1,0 +1,21 @@
+import {test,expect} from '@playwright/test';
+test('Production PWA reloads offline with local assets and saved data',async({page,context})=>{
+ await page.goto('/');await page.getByRole('button',{name:'Get Started'}).click();
+ await page.evaluate(async()=>{await navigator.serviceWorker.ready;});
+ await page.reload();
+ await page.waitForFunction(()=>Boolean(navigator.serviceWorker.controller));
+ const manifest=await (await page.request.get('/manifest.webmanifest')).json();
+ expect(manifest.display).toBe('standalone');expect(manifest.icons).toHaveLength(2);
+ await page.getByRole('button',{name:'Grocery List',exact:true}).click();
+ await page.getByRole('checkbox',{name:'Vegetables (1 bunch)'}).check();
+ await context.setOffline(true);await page.reload();
+ await expect(page.getByRole('heading',{name:'Grocery List',exact:true})).toBeVisible();
+ await expect(page.getByRole('checkbox',{name:'Vegetables (1 bunch)'})).toBeChecked();
+ await expect(page.getByText('You are offline. Your saved plans and lists are still available.')).toBeVisible();
+ await page.getByRole('navigation').getByRole('button',{name:'Meals',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Meal Plan',exact:true})).toBeVisible();
+ await page.evaluate(()=>document.fonts.ready);
+ expect(await page.locator('.food-thumb img').evaluateAll(images=>images.length>0&&images.every(img=>(img as HTMLImageElement).naturalWidth>0))).toBe(true);
+ await page.getByRole('navigation').getByRole('button',{name:'Home',exact:true}).click();
+ expect(await page.locator('img').evaluateAll(images=>images.every(img=>(img as HTMLImageElement).naturalWidth>0))).toBe(true);
+});
