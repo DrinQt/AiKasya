@@ -3,10 +3,10 @@
   
 
 ## Team Members:
-Buñag, Roswell, 
-Kalaw, James Andre,
-Ramos, Monnic Chelica Miles 
-Reyes, Aldrin Paul
+1. Buñag, Roswell, 
+2. Kalaw, James Andre,
+3. Ramos, Monnic Chelica Miles 
+4. Reyes, Aldrin Paul
 
 AiKasya's repository keeps frontend and backend work separate.
 
