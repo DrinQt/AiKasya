@@ -2,7 +2,7 @@
 - an offline-first meal planning and budget optimization app powered by Local AI, designed for Filipinos, especially those with irregular or fluctuating daily income. Users enter their budget, household size, number of days, pantry ingredients, and food allergies. AIKasya then plans affordable Filipino meals, builds daily breakfast, lunch, and dinner schedules, and creates shopping lists that never go over budget. Prices come from official PSA, DA, and DTI data, with clearly labeled estimates where official data is missing, and users can enter their own prices. An on-device AI model understands requests in English, Filipino, or Taglish, while every peso is calculated exactly in code. This makes everyday food planning practical, accessible, and budget-friendly, even without an internet connection.
   
 
-**Team Members: **
+## Team Members:
 Buñag, Roswell, 
 Kalaw, James Andre,
 Ramos, Monnic Chelica Miles 
