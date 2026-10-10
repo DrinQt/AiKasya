@@ -25,7 +25,7 @@ for (const language of ["en", "fil"]) {
     }, language);
     await page.reload();
     await expect(page.locator("html")).toHaveAttribute("lang", language);
-    for (const width of [320, 390, 768, 1440]) {
+    for (const width of [320, 375, 390, 430, 768, 1440]) {
       await page.setViewportSize({ width, height: 844 });
       for (const route of routes) {
         await page.goto(`/#${route}`);

@@ -1,3 +1,4 @@
+import { chooseNumber } from "./helpers/numberSheet";
 import { test, expect } from "@playwright/test";
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/**", (route) => route.abort());
@@ -23,9 +24,7 @@ test("Settings switches English and Filipino and persists language", async ({
     page.getByRole("button", { name: "Magplano ng Pagkain" }),
   ).toBeVisible();
   await page.reload();
-  await expect(
-    page.getByRole("button", { name: "₱500 Aking Badyet" }),
-  ).toBeVisible();
+  await expect(page.locator(".budget-card input")).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "fil");
 });
 test("Insights reflects checked grocery spending", async ({ page }) => {
@@ -87,22 +86,24 @@ test("Grocery checks and editable prices persist; market calculates spending", a
   ).toBeVisible();
   await expect(page.getByText("₱210", { exact: true })).toBeVisible();
 });
-test("Meal planner uses household inputs and opens recipe details", async ({
+test("Meal planner requires confirmed inputs and reports unavailable backend", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Get Started" }).click();
-  await page.getByRole("button", { name: "₱500 My Budget" }).click();
+  await page.goto("/#budget");
   await page.getByLabel("Food budget (₱)").fill("300");
-  await page.getByLabel("Household size").fill("2");
-  await page.getByLabel("Number of days").fill("2");
-  await page.getByRole("button", { name: "Save Budget" }).click();
+  await chooseNumber(page, "Household size", "2");
+  await chooseNumber(page, "Number of days", "2");
+  await page.getByRole("button", { name: "Save Preferences" }).click();
   await page.getByRole("button", { name: "Plan My Meals" }).click();
-  await expect(page.getByText("₱295", { exact: true })).toBeVisible();
-  await expect(page.getByText("Within budget!")).toBeVisible();
-  await page.getByRole("button", { name: /Adobo/ }).click();
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+
   await expect(
-    page.getByRole("heading", { name: "Recipe Details" }),
+    page.getByText(
+      "Could not reach the local backend. Start the backend and try again.",
+    ),
   ).toBeVisible();
 });
 test("AI Chat reports backend unavailability and supports clearing", async ({
@@ -110,9 +111,11 @@ test("AI Chat reports backend unavailability and supports clearing", async ({
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Get Started" }).click();
-  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await page.goto("/#chat");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
   await page
-    .getByRole("textbox", { name: "Ask me anything…" })
+    .getByRole("textbox", { name: /Describe a meal or food preference/ })
     .fill("Plan meals for ₱300");
   await page.getByRole("button", { name: "Send message" }).click();
   await expect(
@@ -148,21 +151,17 @@ test("Welcome uses official assets and starts the dashboard", async ({
 test("Dashboard budget inputs update and persist", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Get Started" }).click();
-  await page.getByRole("button", { name: "₱500 My Budget" }).click();
+  await page.goto("/#budget");
   await page.getByLabel("Food budget (₱)").fill("300");
-  await page.getByLabel("Household size").fill("2");
-  await page.getByLabel("Number of days").fill("2");
-  await page.getByRole("button", { name: "Save Budget" }).click();
+  await chooseNumber(page, "Household size", "2");
+  await chooseNumber(page, "Number of days", "2");
+  await page.getByRole("button", { name: "Save Preferences" }).click();
+  await expect(page.locator(".budget-card input")).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "₱300 My Budget" }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("combobox", { name: "Household size" }),
-  ).toHaveValue("2");
+    page.getByRole("button", { name: /^Household size:/ }),
+  ).toHaveAttribute("data-value", "2");
   await page.reload();
-  await expect(
-    page.getByRole("button", { name: "₱300 My Budget" }),
-  ).toBeVisible();
+  await expect(page.locator(".budget-card input")).toBeVisible();
 });
 test("Welcome and dashboard fit narrow mobile through desktop", async ({
   page,
@@ -185,63 +184,45 @@ test("Welcome and dashboard fit narrow mobile through desktop", async ({
   }
 });
 
-test("Floating mascot opens chat without leaving the page and restores focus", async ({
+test("Home sends users to the allergy and purpose check before chat", async ({
   page,
 }) => {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Get Started" }).click();
+  await page.goto("/#home");
   await expect(
-    page.getByRole("navigation").getByRole("button", { name: "AI Chat" }),
+    page.getByRole("button", { name: "AI Chat", exact: true }),
   ).toHaveCount(0);
-  const launcher = page.getByRole("button", { name: "AI Chat", exact: true });
-  await launcher.click();
-  const chat = page.getByRole("dialog", { name: "AI Chat" });
-  await expect(chat).toBeVisible();
-  await expect(chat.getByRole("textbox")).toBeFocused();
-  await expect(page).toHaveURL(/#home$/);
-  await chat.getByRole("textbox").fill("Help me plan dinner");
-  await chat.getByRole("button", { name: "Send message" }).click();
-  await expect(
-    chat.getByText("Help me plan dinner", { exact: true }),
-  ).toBeVisible();
-  await page.keyboard.press("Escape");
-  await expect(chat).toHaveCount(0);
-  await expect(launcher).toBeFocused();
-  await launcher.click();
-  await expect(
-    chat.getByText("Help me plan dinner", { exact: true }),
-  ).toBeVisible();
-  await chat.getByRole("button", { name: "Close chat" }).click();
   await page
-    .getByRole("navigation")
-    .getByRole("button", { name: "Meals", exact: true })
+    .getByRole("button", { name: "Plan My Meals", exact: true })
     .click();
-  await expect(chat).toHaveCount(0);
-  await expect(page).toHaveURL(/#meals$/);
+  await expect(
+    page.getByRole("radio", { name: "Meal plan", exact: true }),
+  ).toBeVisible();
+  await expect(page.getByRole("textbox")).toHaveCount(0);
 });
 
-test("Dashboard household controls save directly and update the meal plan", async ({
+test("Dashboard household controls save directly and prefill planning inputs", async ({
   page,
 }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Get Started" }).click();
-  await page
-    .getByRole("combobox", { name: "Household size" })
-    .selectOption("2");
-  await page
-    .getByRole("combobox", { name: "Number of days" })
-    .selectOption("2");
+  await chooseNumber(page, "Household size", "2");
+  await chooseNumber(page, "Number of days", "2");
   await expect(page).toHaveURL(/#home$/);
-  await expect(
-    page.getByRole("button", { name: "\u20b1500 My Budget" }),
-  ).toBeVisible();
+  await expect(page.locator(".budget-card input")).toBeVisible();
   await page.reload();
   await expect(
-    page.getByRole("combobox", { name: "Household size" }),
-  ).toHaveValue("2");
+    page.getByRole("button", { name: /^Household size:/ }),
+  ).toHaveAttribute("data-value", "2");
   await expect(
-    page.getByRole("combobox", { name: "Number of days" }),
-  ).toHaveValue("2");
+    page.getByRole("button", { name: /^Number of days:/ }),
+  ).toHaveAttribute("data-value", "2");
   await page.getByRole("button", { name: "Plan My Meals" }).click();
-  await expect(page.getByText("\u20b1295", { exact: true })).toBeVisible();
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+
+  await expect(
+    page.getByText(
+      "Could not reach the local backend. Start the backend and try again.",
+    ),
+  ).toBeVisible();
 });

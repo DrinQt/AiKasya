@@ -1,26 +1,58 @@
 import { test, expect } from "@playwright/test";
-test.skip(process.env.AIKASYA_LIVE_BACKEND !== "1", "Run with AIKASYA_LIVE_BACKEND=1 and the local backend on port 8000.");
-test("Browser connects to real backend plans, recipe steps, groceries, and chat", async ({ page }) => {
+test.skip(
+  process.env.AIKASYA_LIVE_BACKEND !== "1",
+  "Run with AIKASYA_LIVE_BACKEND=1 and the local backend on port 8000.",
+);
+test("Browser connects to real backend plans, recipe steps, groceries, and chat", async ({
+  page,
+}) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Get Started" }).click();
-  const response = page.waitForResponse(response => response.url().endsWith("/api/plans/generate") && response.request().method() === "POST");
+  const response = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/plans/generate") &&
+      response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: "Plan My Meals" }).click();
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+
   const plan = await (await response).json();
   expect(plan.status).toBe("feasible");
   const option = plan.options[0];
-  await expect(page.getByRole("heading", { name: option.recipe_name, exact: true })).toBeVisible();
-  const recipeResponse = page.waitForResponse(response => response.url().endsWith(`/api/recipes/${option.recipe_id}`));
+  await expect(
+    page.getByRole("heading", { name: option.recipe_name, exact: true }),
+  ).toBeVisible();
+  const recipeResponse = page.waitForResponse((response) =>
+    response.url().endsWith(`/api/recipes/${option.recipe_id}`),
+  );
   await page.getByRole("button", { name: "View Details" }).first().click();
   const recipe = await (await recipeResponse).json();
   await expect(page.getByText(recipe.steps[0], { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "Add to Grocery List" }).click();
   const item = option.items_to_buy[0];
-  await expect(page.getByRole("checkbox", { name: `${item.name} (${item.quantity} ${item.unit})`, exact: true })).toBeVisible();
-  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await expect(
+    page.getByRole("checkbox", {
+      name: `${item.name} (${item.quantity} ${item.unit})`,
+      exact: true,
+    }),
+  ).toBeVisible();
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
   await page.getByRole("textbox").fill("600 pesos for 3 people");
-  const chatPlanResponse = page.waitForResponse(response => response.url().endsWith("/api/plans/generate") && response.request().method() === "POST");
+  const chatPlanResponse = page.waitForResponse(
+    (response) =>
+      response.url().endsWith("/api/plans/generate") &&
+      response.request().method() === "POST",
+  );
   await page.getByRole("button", { name: "Send message" }).click();
   const chatPlan = await (await chatPlanResponse).json();
   expect(chatPlan.budget_php).toBe(600);
-  await expect(page.getByRole("dialog").getByRole("heading", { name: chatPlan.options[0].recipe_name, exact: true })).toBeVisible();
+  await expect(
+    page.getByRole("dialog").getByRole("heading", {
+      name: chatPlan.options[0].recipe_name,
+      exact: true,
+    }),
+  ).toBeVisible();
 });

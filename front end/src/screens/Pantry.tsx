@@ -2,6 +2,7 @@ import { useState, type Dispatch, type SetStateAction } from "react";
 import { api, savePantry } from "../api";
 import { Plus, Check, X, Sparkles } from "lucide-react";
 import { Button, MascotTip, type T } from "../components";
+import { copy } from "../plannerUI";
 import type { State } from "../state";
 export default function Pantry({
   state,
@@ -19,8 +20,24 @@ export default function Pantry({
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState("");
   const [quantity, setQuantity] = useState("");
+  const label = (en: string, fil: string) => copy(state.language, en, fil);
   return (
     <main className="screen-content pantry-content">
+      <section className="planner-hero">
+        <span className="eyebrow">
+          {label("GOOD FOOD STARTS HERE", "DITO NAGSISIMULA ANG MASARAP")}
+        </span>
+        <h2>
+          {label("Make the most of what you have.", "Sulitin ang nasa kusina.")}
+        </h2>
+        <p>
+          {state.pantry.length}{" "}
+          {label(
+            "ingredients on hand - Less waste, more possibilities.",
+            "sangkap sa kusina - Iwas sayang, mas maraming pagpipilian.",
+          )}
+        </p>
+      </section>
       <div className="backend-actions">
         <Button
           disabled={syncing}
@@ -98,7 +115,7 @@ export default function Pantry({
                   }))
                 }
               >
-                <X size={13} />
+                <X size={18} />
               </button>
               <span className="ingredient-emoji" aria-hidden="true">
                 {item.emoji}
@@ -109,6 +126,7 @@ export default function Pantry({
               <small>{item.quantity}</small>
               <span className="available-check" aria-label={t("available")}>
                 <Check size={13} />
+                {t("available")}
               </span>
             </article>
           ))}
@@ -170,7 +188,14 @@ export default function Pantry({
           </Button>
         </form>
       )}
-      <MascotTip>{t("pantryTip")}</MascotTip>
+      <MascotTip>
+        {state.pantry.length
+          ? label(
+              "Start with your pantry. Explore meal ideas, then check each recipe for anything you still need.",
+              "Magsimula sa iyong pantry. Tingnan ang mga pagkain at suriin ang mga kulang na sangkap.",
+            )
+          : t("noPantry")}
+      </MascotTip>
       <Button onClick={onSuggest}>
         <Sparkles className="yellow" />
         {t("suggest")}

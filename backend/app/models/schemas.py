@@ -1,9 +1,10 @@
 from decimal import Decimal
 from typing import List, Optional, Dict, Any, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 AllowedIntent = Literal[
     "plan_meal",
+    "buy_food",
     "update_price",
     "swap_ingredient",
     "view_recipe",
@@ -21,13 +22,28 @@ class AgentInterpretRequest(BaseModel):
     existing_constraints: Dict[str, Any] = Field(default_factory=dict, description="Pre-existing constraints")
 
 
+class MealSkip(BaseModel):
+    day: int = Field(ge=1)
+    meal_type: Literal["breakfast", "lunch", "dinner"]
+
+
+class MealChoice(MealSkip):
+    recipe_id: str
+
+
 class AgentInterpretResponse(BaseModel):
+    skipped_meals: List[MealSkip] = Field(default_factory=list)
+    budget_basis: Literal["total", "per_day"] = "total"
+    days: Optional[int] = None
+    scenario_budget_php: Optional[float] = None
     intent: AllowedIntent = Field(default="plan_meal")
     budget_php: Optional[float] = Field(default=None, description="Budget extracted in PHP")
     servings: Optional[int] = Field(default=None, description="Number of persons/servings")
     meal_scope: MealScope = Field(default="single_meal")
     meal_type: Optional[str] = Field(default=None, description="e.g. breakfast, lunch, dinner")
     pantry_mentions: List[str] = Field(default_factory=list, description="Ingredients already available at home")
+    pantry_empty: bool = False
+    shopping_items: List[Dict[str, Any]] = Field(default_factory=list)
     excluded_ingredients: List[str] = Field(default_factory=list, description="Allergens or excluded items")
     max_prep_minutes: Optional[int] = Field(default=None, description="Maximum preparation time in minutes")
     missing_required_fields: List[str] = Field(default_factory=list, description="Missing fields for planning")
@@ -42,6 +58,10 @@ class PantryInputItem(BaseModel):
 
 
 class PlanGenerateRequest(BaseModel):
+    meal_choices: List[MealChoice] = Field(default_factory=list)
+    skipped_meals: List[MealSkip] = Field(default_factory=list)
+    days: int = Field(default=1, ge=1, le=30)
+    budget_basis: Literal["total", "per_day"] = "total"
     budget_php: float = Field(..., gt=0, description="Available food budget in PHP")
     servings: int = Field(default=4, ge=1, description="Household size or servings")
     meal_scope: MealScope = Field(default="single_meal")
@@ -49,6 +69,15 @@ class PlanGenerateRequest(BaseModel):
     pantry: List[PantryInputItem] = Field(default_factory=list)
     excluded_ingredient_ids: List[str] = Field(default_factory=list)
     max_prep_minutes: Optional[int] = Field(default=None)
+    basic_food: bool = False
+    shopping_list: bool = False
+    shopping_items: List[Dict[str, Any]] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def validate_skip_days(self):
+        if any(meal.day > self.days for meal in self.skipped_meals + self.meal_choices):
+            raise ValueError("Skipped meal day must be within the planned days.")
+        return self
 
 
 class ItemToBuy(BaseModel):
@@ -69,6 +98,7 @@ class PantryItemUsed(BaseModel):
 
 
 class RecipeOption(BaseModel):
+    steps: List[str] = Field(default_factory=list)
     recipe_id: str
     recipe_name: str
     servings: int
@@ -81,14 +111,40 @@ class RecipeOption(BaseModel):
     warnings: List[str] = Field(default_factory=list)
 
 
-PlanStatus = Literal["feasible", "no_match", "needs_price_data", "invalid_request"]
+PlanStatus = Literal["feasible", "partial", "no_match", "needs_price_data", "invalid_request"]
+
+
+class ScheduledMeal(BaseModel):
+    skipped: bool = False
+    meal_type: Literal["breakfast", "lunch", "dinner"]
+    option: Optional[RecipeOption] = None
+    cost_php: float = 0
+    remaining_day_php: float
+    remaining_total_php: float
+    reason: Optional[str] = None
+
+
+class ScheduledDay(BaseModel):
+    extra_groceries: Optional[RecipeOption] = None
+    day: int
+    allocated_php: float
+    spent_php: float
+    remaining_php: float
+    meals: List[ScheduledMeal]
 
 
 class PlanGenerateResponse(BaseModel):
+    meal_alternatives: List[Dict[str, Any]] = Field(default_factory=list)
+    removed_cost_php: float = 0
+    schedule: List[ScheduledDay] = Field(default_factory=list)
+    total_spent_php: float = 0
+    remaining_total_php: Optional[float] = None
     status: PlanStatus
     budget_php: float
     options: List[RecipeOption] = Field(default_factory=list)
     reason_if_no_match: Optional[str] = None
+    basic_food: bool = False
+    shopping_list: bool = False
 
 
 class PlanRepriceRequest(BaseModel):
@@ -97,6 +153,12 @@ class PlanRepriceRequest(BaseModel):
     servings: int
     pantry: List[PantryInputItem] = Field(default_factory=list)
     excluded_ingredient_ids: List[str] = Field(default_factory=list, description="Ingredient ids or allergy words")
+
+
+class MealAlternativesRequest(PlanGenerateRequest):
+    target_day: int = Field(ge=1, le=30)
+    target_meal_type: Literal["breakfast", "lunch", "dinner"]
+    exclude_recipe_id: str
 
 
 class ExclusionResolveRequest(BaseModel):

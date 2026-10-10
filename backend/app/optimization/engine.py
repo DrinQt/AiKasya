@@ -3,6 +3,7 @@ from decimal import Decimal
 from app.optimization.calculator import (
     calculate_ingredient_shortfall,
     decimal_round,
+    normalize_unit_and_quantity,
 )
 from app.models.schemas import (
     PlanGenerateRequest,
@@ -19,6 +20,7 @@ def evaluate_recipe_affordability(
     pantry_map: Dict[str, Tuple[float, str]],
     prices_map: Dict[str, Dict[str, Any]],
     excluded_ids: List[str],
+    inventory_after: Optional[Dict[str, Tuple[float, str]]] = None,
 ) -> Tuple[Optional[RecipeOption], Optional[str]]:
     base_servings = recipe.get("base_servings", 4)
     scale_factor = target_servings / base_servings
@@ -27,6 +29,7 @@ def evaluate_recipe_affordability(
     pantry_items_used: List[PantryItemUsed] = []
     warnings: List[str] = []
     total_cost_decimal = Decimal("0.00")
+    next_inventory = dict(pantry_map)
 
     for ing in recipe.get("ingredients", []):
         ing_id = ing["ingredient_id"]
@@ -71,6 +74,9 @@ def evaluate_recipe_affordability(
             pantry_unit=pantry_unit,
             purchase_increment=purchase_inc,
         )
+        available, available_unit = normalize_unit_and_quantity(pantry_qty, pantry_unit)
+        required, _ = normalize_unit_and_quantity(req_qty, req_unit)
+        next_inventory[ing_id] = (max(0.0, (available if available_unit == base_unit else 0) + to_buy_qty - required), base_unit)
 
         if pantry_used_qty > 0:
             pantry_items_used.append(
@@ -109,8 +115,11 @@ def evaluate_recipe_affordability(
             )
 
     total_cost_float = float(total_cost_decimal)
+    if inventory_after is not None:
+        inventory_after.update(next_inventory)
 
     return RecipeOption(
+        steps=recipe.get("steps", []),
         recipe_id=recipe["recipe_id"],
         recipe_name=recipe["name"],
         servings=target_servings,
@@ -191,7 +200,7 @@ def plan_budget_to_meals(
 
     def rank_score(opt: RecipeOption) -> float:
         pantry_score = len(opt.pantry_items_used) * 20.0
-        cushion_score = opt.remaining_php * 0.5
+        cushion_score = -opt.remaining_php * 0.5
         time_penalty = ((opt.prep_minutes or 0) + (opt.cook_minutes or 0)) * 0.2
         return pantry_score + cushion_score - time_penalty
 

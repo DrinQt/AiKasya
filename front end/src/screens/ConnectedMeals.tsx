@@ -9,6 +9,7 @@ import {
 import { Button, type T } from "../components";
 import type { State } from "../state";
 import MealPlanner from "./MealPlanner";
+import { copy } from "../plannerUI";
 export default function ConnectedMeals({
   state,
   t,
@@ -45,17 +46,30 @@ export default function ConnectedMeals({
       .then((data) => {
         if (!controller.signal.aborted) setResult(data);
       })
-      .catch(() => {
+      .catch((error) => {
         if (!controller.signal.aborted)
           setError(
-            "Local backend unavailable. Showing the sample plan; start the backend and retry for calculated meals.",
+            state.allergies.status === "restricted" ||
+              (error instanceof Error &&
+                error.message.startsWith("Please clarify"))
+              ? error instanceof Error
+                ? error.message
+                : "Could not check household allergies. Please retry."
+              : "Local backend unavailable. Showing the sample plan; start the backend and retry for calculated meals.",
           );
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoading(false);
       });
     return () => controller.abort();
-  }, [state.budget, state.people, state.days, state.pantry, retry]);
+  }, [
+    state.budget,
+    state.people,
+    state.days,
+    state.pantry,
+    state.allergies,
+    retry,
+  ]);
   async function openRecipe(option: MealOption) {
     setRecipeError("");
     try {
@@ -75,27 +89,56 @@ export default function ConnectedMeals({
         <p role="status">Calculating meals with the local backend...</p>
       </main>
     );
+  const showSample =
+    state.allergies.status !== "restricted" &&
+    !error.startsWith("Please clarify");
+  const ErrorContainer = showSample ? "div" : "main";
   if (error)
     return (
       <>
-        <div className="screen-content">
+        <ErrorContainer className="screen-content meal-content">
           <p role="status">{error}</p>
           <Button onClick={() => setRetry((n) => n + 1)}>
             Retry local backend
           </Button>
-        </div>
-        <MealPlanner
-          state={state}
-          t={t}
-          money={money}
-          onSetup={onSetup}
-          onRecipe={onSampleRecipe}
-          onAdd={onSampleAdd}
-        />
+        </ErrorContainer>
+        {showSample && (
+          <MealPlanner
+            state={state}
+            t={t}
+            money={money}
+            onSetup={onSetup}
+            onRecipe={onSampleRecipe}
+            onAdd={onSampleAdd}
+          />
+        )}
       </>
     );
   return (
-    <main className="screen-content">
+    <main className="screen-content meal-content">
+      <section className="planner-hero">
+        <span className="eyebrow">
+          {copy(
+            state.language,
+            "A PLAN FOR EVERY PESO",
+            "PLANO PARA SA BAWAT PISO",
+          )}
+        </span>
+        <h2>
+          {copy(
+            state.language,
+            "Good meals. Happy budget.",
+            "Masarap na pagkain. Sulit na badyet.",
+          )}
+        </h2>
+        <p>
+          {copy(
+            state.language,
+            "Meal options calculated for your budget and household preferences.",
+            "Mga pagpipiliang pagkain ayon sa badyet at kagustuhan ng pamilya.",
+          )}
+        </p>
+      </section>
       <button className="plan-banner" onClick={onSetup}>
         <span>
           <strong>Local meal options</strong>

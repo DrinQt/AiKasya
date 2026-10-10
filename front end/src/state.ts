@@ -1,4 +1,10 @@
 import { useEffect, useState } from "react";
+import { readPlanInsights, type PlanInsight } from "./planInsights";
+import {
+  emptyAllergies,
+  readAllergies,
+  type AllergyPreferences,
+} from "./allergies";
 import {
   groceries,
   pantry,
@@ -6,22 +12,29 @@ import {
   type PantryItem,
   type Message,
 } from "./data";
+export const householdLimits = { people: 20, days: 30 } as const;
 export type State = {
+  insightsExcludedGroceryIds: string[];
+  planInsights: Partial<Record<PlanInsight["feature"], PlanInsight>>;
   language: "en" | "fil";
   started: boolean;
   budget: number;
   people: number;
   days: number;
+  allergies: AllergyPreferences;
   groceries: GroceryItem[];
   pantry: PantryItem[];
   messages: Message[];
 };
 export const initialState: State = {
+  insightsExcludedGroceryIds: [],
+  planInsights: {},
   language: "en",
   started: false,
   budget: 500,
   people: 3,
   days: 3,
+  allergies: emptyAllergies(),
   groceries,
   pantry,
   messages: [{ id: "hello", role: "assistant", key: "chatHello" }],
@@ -35,20 +48,28 @@ function readState(): State {
     return {
       ...initialState,
       ...saved,
+      planInsights: readPlanInsights(saved.planInsights),
+      insightsExcludedGroceryIds: Array.isArray(saved.insightsExcludedGroceryIds) ? saved.insightsExcludedGroceryIds.filter((id) => typeof id === "string") : [],
       language: saved.language === "fil" ? "fil" : "en",
       started: saved.started === true,
+      allergies: readAllergies(saved.allergies),
       budget:
-        typeof saved.budget === "number" && Number.isFinite(saved.budget) && saved.budget > 0 && saved.budget <= 10000000
+        typeof saved.budget === "number" &&
+        Number.isFinite(saved.budget) &&
+        saved.budget > 0 &&
+        saved.budget <= 10000000
           ? saved.budget
           : 500,
       people:
         Number.isInteger(saved.people) &&
         saved.people! >= 1 &&
-        saved.people! <= 20
+        saved.people! <= householdLimits.people
           ? saved.people!
           : 3,
       days:
-        Number.isInteger(saved.days) && saved.days! >= 1 && saved.days! <= 30
+        Number.isInteger(saved.days) &&
+        saved.days! >= 1 &&
+        saved.days! <= householdLimits.days
           ? saved.days!
           : 3,
       groceries:
