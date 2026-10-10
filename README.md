@@ -3,8 +3,8 @@
   
 
 ## Team Members:
-1. Buñag, Roswell, 
-2. Kalaw, James Andre,
+1. Buñag, Roswell
+2. Kalaw, James Andre
 3. Ramos, Monnic Chelica Miles 
 4. Reyes, Aldrin Paul
 
