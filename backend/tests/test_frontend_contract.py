@@ -3,6 +3,33 @@ from app.main import app
 from app.local_ai.parser import rule_assisted_taglish_fallback
 
 
+def test_buy_food_followups_and_empty_pantry():
+    for text in ["if theres no recipe, what food can i buy for 100 pesos so i can eat",
+                 "but i dont have foods in my pantry", "wala akong pagkain sa pantry"]:
+        result = rule_assisted_taglish_fallback(text, {"budget_php": 100, "servings": 3})
+        assert result.intent == "buy_food"
+        assert result.budget_php == 100
+        assert result.excluded_ingredients == []
+    assert rule_assisted_taglish_fallback("but i dont have foods in my pantry").pantry_empty
+
+
+def test_basic_food_fits_budget_without_pantry_and_respects_allergies():
+    with TestClient(app) as client:
+        request = {"budget_php": 100, "servings": 3, "pantry": [], "basic_food": True}
+        result = client.post("/api/plans/generate", json=request).json()
+        assert result["basic_food"]
+        assert result["status"] == "feasible"
+        for option in result["options"]:
+            assert option["estimated_total_php"] <= 100
+            assert not option["pantry_items_used"]
+            assert abs(sum(i["cost_php"] for i in option["items_to_buy"]) - option["estimated_total_php"]) < 0.01
+        excluded = client.post("/api/plans/generate", json={**request, "excluded_ingredient_ids": ["egg"]}).json()
+        assert all(i["ingredient_id"] != "eggs" for o in excluded["options"] for i in o["items_to_buy"])
+        unknown = client.post("/api/plans/generate", json={**request, "excluded_ingredient_ids": ["unknown-allergen"]}).json()
+        assert unknown["status"] == "invalid_request"
+        assert unknown["options"] == []
+
+
 def test_parser_uses_dashboard_constraints_and_explicit_overrides():
     result = rule_assisted_taglish_fallback("Plan dinner", {"budget_php": 150, "servings": 2})
     assert result.budget_php == 150

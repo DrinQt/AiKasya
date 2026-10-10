@@ -22,12 +22,14 @@ export type MealOption = {
   warnings: string[];
 };
 export type Plan = {
+  basic_food?: boolean;
   status: string;
   budget_php: number;
   options: MealOption[];
   reason_if_no_match: string | null;
 };
 export type Interpretation = {
+  pantry_empty?: boolean;
   intent: string;
   budget_php: number | null;
   servings: number | null;
@@ -146,6 +148,7 @@ export async function generatePlan(
       pantry,
       excluded_ingredient_ids: excluded,
       max_prep_minutes: interpretation?.max_prep_minutes ?? null,
+      basic_food: interpretation?.intent === "buy_food",
     },
     signal,
   );

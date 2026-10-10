@@ -73,8 +73,12 @@ def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[
     msg = message.lower()
     constraints = existing_constraints or {}
 
+    pantry_empty = bool(re.search(r"(?:\b(?:no|empty)\s+(?:food\s+(?:in\s+(?:my|the)\s+)?)?pantry|pantry\s+is\s+empty|(?:don['’]?t|do not)\s+have\s+(?:any\s+)?foods?\s+in\s+(?:my\s+)?pantry|wala(?:ng)?\s+(?:akong\s+)?(?:pagkain|laman|stock)(?:\s+sa\s+(?:pantry|kusina))?)", msg))
+    buying_food = pantry_empty or bool(re.search(r"(?:food.*\bbuy\b|\bbuy\b.*food|what can i buy|ano.*(?:mabibili|bibilhin)|walang recipe|no recipe)", msg))
     intent: AllowedIntent = "plan_meal"
-    if any(k in msg for k in ["presyo", "price", "magkano", "per kilo", "kada kilo"]):
+    if buying_food:
+        intent = "buy_food"
+    elif any(k in msg for k in ["presyo", "price", "magkano", "per kilo", "kada kilo"]):
         intent = "update_price"
     elif any(k in msg for k in ["palitan", "swap", "substitute", "iba naman"]):
         intent = "swap_ingredient"
@@ -149,7 +153,7 @@ def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[
                 servings = val
                 break
 
-    meal_type = "dinner"
+    meal_type = None
     if any(k in msg for k in ["almusal", "breakfast", "agahan"]):
         meal_type = "breakfast"
     elif any(k in msg for k in ["tanghalian", "lunch"]):
@@ -186,8 +190,11 @@ def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[
         r"\b(?:allergic|allergy|allergies|alergic|alerdyik|alerdyi|may allergy)\s+(?:ako\s+|kami\s+|siya\s+|po\s+)*(?:sa|to|ng|in)?\s*([a-z][a-z\s]*?)(?=,|\.|;|\bpero\b|\bbut\b|\d|$)",
     ]
     filler = {"lang", "po", "kami", "ako", "na", "ang", "mga", "the", "any", "please", "pls", "sana"}
+    exclusion_message = re.sub(r"\bno recipe\b", "", msg)
+    if pantry_empty:
+        exclusion_message = re.sub(r"\b(?:no|walang)\s+(?:food|pagkain|laman|stock|pantry)\b[^.!?]*", "", exclusion_message)
     for pattern in exclusion_patterns:
-        for m in re.finditer(pattern, msg):
+        for m in re.finditer(pattern, exclusion_message):
             for part in re.split(r"\s*(?:,|\bat\b|\band\b|\bor\b|\bo\b)\s*", m.group(1)):
                 ex_item = " ".join(w for w in part.split() if w not in filler).strip()
                 if ex_item and ex_item not in ["kanin", "bawang"] and ex_item not in excluded:
@@ -195,7 +202,7 @@ def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[
 
     missing: List[str] = []
     clarification: Optional[str] = None
-    if budget_php is None and intent == "plan_meal":
+    if budget_php is None and intent in ("plan_meal", "buy_food"):
         missing.append("budget_php")
         clarification = "Magkano po ang ating target budget para sa lulutuing ulam?"
 
@@ -206,6 +213,7 @@ def rule_assisted_taglish_fallback(message: str, existing_constraints: Optional[
         meal_scope="single_meal",
         meal_type=meal_type,
         pantry_mentions=pantry_mentions,
+        pantry_empty=pantry_empty,
         excluded_ingredients=excluded,
         max_prep_minutes=None,
         missing_required_fields=missing,

@@ -31,6 +31,20 @@ async def generate_plan(req: PlanGenerateRequest):
     req = req.model_copy(update={"excluded_ingredient_ids": resolved["excluded_ingredient_ids"]})
 
     all_recipes = get_all_recipes_db()
+    if req.basic_food:
+        # Simple preparations, costed with the same purchase increments and exclusions as recipes.
+        all_recipes = [
+            {"recipe_id": "basic_" + protein, "name": name, "base_servings": 1,
+             "prep_minutes": 0, "cook_minutes": 20,
+             "ingredients": [
+                 {"ingredient_id": "rice", "name": "Uncooked rice", "quantity": 100, "unit": "g"},
+                 {"ingredient_id": protein, "name": label, "quantity": qty, "unit": unit},
+             ]}
+            for protein, name, label, qty, unit in [
+                ("eggs", "Rice and boiled egg", "Egg", 1, "piece"),
+                ("tomato", "Rice and tomato", "Tomato", 100, "g"),
+            ]
+        ]
     prices_map = get_latest_prices_map()
 
     result = plan_budget_to_meals(
@@ -39,6 +53,7 @@ async def generate_plan(req: PlanGenerateRequest):
         prices_map=prices_map,
     )
     active = bool(resolved["resolved"])
+    result.basic_food = req.basic_food
     for opt in result.options:
         ids = [i.ingredient_id for i in opt.items_to_buy] + [p.ingredient_id for p in opt.pantry_items_used]
         opt.warnings.extend(label_check_warnings(ids, active))

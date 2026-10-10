@@ -33,6 +33,9 @@ async def interpret_user_request(
     model_name: str = DEFAULT_MODEL,
 ) -> AgentInterpretResponse:
     prompt = f"User Request: {message}\nExisting Constraints: {json.dumps(existing_constraints or {})}"
+    fallback = rule_assisted_taglish_fallback(message, existing_constraints)
+    if fallback.intent == "buy_food":
+        return fallback
 
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:

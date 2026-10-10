@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 AllowedIntent = Literal[
     "plan_meal",
+    "buy_food",
     "update_price",
     "swap_ingredient",
     "view_recipe",
@@ -28,6 +29,7 @@ class AgentInterpretResponse(BaseModel):
     meal_scope: MealScope = Field(default="single_meal")
     meal_type: Optional[str] = Field(default=None, description="e.g. breakfast, lunch, dinner")
     pantry_mentions: List[str] = Field(default_factory=list, description="Ingredients already available at home")
+    pantry_empty: bool = False
     excluded_ingredients: List[str] = Field(default_factory=list, description="Allergens or excluded items")
     max_prep_minutes: Optional[int] = Field(default=None, description="Maximum preparation time in minutes")
     missing_required_fields: List[str] = Field(default_factory=list, description="Missing fields for planning")
@@ -49,6 +51,7 @@ class PlanGenerateRequest(BaseModel):
     pantry: List[PantryInputItem] = Field(default_factory=list)
     excluded_ingredient_ids: List[str] = Field(default_factory=list)
     max_prep_minutes: Optional[int] = Field(default=None)
+    basic_food: bool = False
 
 
 class ItemToBuy(BaseModel):
@@ -89,6 +92,7 @@ class PlanGenerateResponse(BaseModel):
     budget_php: float
     options: List[RecipeOption] = Field(default_factory=list)
     reason_if_no_match: Optional[str] = None
+    basic_food: bool = False
 
 
 class PlanRepriceRequest(BaseModel):

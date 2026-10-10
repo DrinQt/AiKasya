@@ -49,17 +49,17 @@ export default function AIChat({
       text.match(/(?:budget|php|₱)\s*(?:of\s*)?(\d+(?:\.\d+)?)/i) ??
       text.match(/^\s*(\d+(?:\.\d+)?)\s*$/);
     const daysMatch = text.match(/(\d+)\s*(?:days?\b|araw\b)/i);
+    const oneDay = /\b(?:isang araw|one day|a day)\b/i.test(text);
     const peopleMatch = text.match(
       /(\d+)\s*(?:people|persons?|servings?|tao|pax)\b/i,
     );
     const amount = budgetMatch ? Number(budgetMatch[1]) : state.budget;
-    const days = daysMatch ? Number(daysMatch[1]) : state.days;
+    const days = daysMatch ? Number(daysMatch[1]) : oneDay ? 1 : state.days;
     const people = peopleMatch ? Number(peopleMatch[1]) : state.people;
     const planningState = constraints
       ? {
           ...state,
-          budget:
-            constraints.budget_php ?? state.budget,
+          budget: constraints.budget_php ?? state.budget,
           people: constraints.servings ?? state.people,
         }
       : {
@@ -89,10 +89,19 @@ export default function AIChat({
             servings: planningState.people,
           },
         }));
+      const previousRequest = [...state.messages]
+        .reverse()
+        .find((message) => message.planRequest)?.planRequest;
       const interpreted = {
         ...parsed,
         budget_php: planningState.budget,
         servings: planningState.people,
+        excluded_ingredients: [
+          ...new Set([
+            ...(previousRequest?.excluded_ingredients ?? []),
+            ...parsed.excluded_ingredients,
+          ]),
+        ],
         clarification_question:
           parsed.clarification_question &&
           !parsed.clarification_question.toLowerCase().includes("budget") &&
@@ -106,7 +115,7 @@ export default function AIChat({
           role: "assistant",
           text: interpreted.clarification_question,
         };
-      } else if (interpreted.intent !== "plan_meal") {
+      } else if (!["plan_meal", "buy_food"].includes(interpreted.intent)) {
         reply = {
           id: crypto.randomUUID(),
           role: "assistant",
@@ -116,6 +125,10 @@ export default function AIChat({
               : "I can find meals within your budget. Use the pantry and grocery screens to edit your stock or prices.",
         };
       } else {
+        if (interpreted.pantry_empty) {
+          planningState.pantry = [];
+          setState((s) => ({ ...s, pantry: [] }));
+        }
         const result = await generatePlan(
           planningState,
           planningState.budget,
@@ -183,6 +196,36 @@ export default function AIChat({
               </p>
               {message.localPlan && !message.localPlan.options.length && (
                 <div className="reply-suggestions">
+                  {!message.localPlan.basic_food && (
+                    <button
+                      className="chat-suggestion"
+                      disabled={pending}
+                      onClick={() =>
+                        void send(
+                          state.language === "fil"
+                            ? "Ano ang mabibili kong pagkain sa badyet ko?"
+                            : "What food can I buy within my budget?",
+                          {
+                            ...message.planRequest!,
+                            intent: "buy_food",
+                            budget_php: message.localPlan!.budget_php,
+                            servings:
+                              message.planRequest?.servings ?? state.people,
+                            excluded_ingredients:
+                              message.planRequest?.excluded_ingredients ?? [],
+                            meal_type: null,
+                            max_prep_minutes: null,
+                            clarification_question: null,
+                            confidence_note: "Basic food shopping",
+                          },
+                        )
+                      }
+                    >
+                      {state.language === "fil"
+                        ? "Simpleng pagkain sa badyet ko"
+                        : "Basic food within my budget"}
+                    </button>
+                  )}
                   {closestMeal(message.localPlan) && (
                     <button
                       className="chat-suggestion"
@@ -247,22 +290,31 @@ export default function AIChat({
                         {option.estimated_total_php.toFixed(2)}
                       </p>
                       <p>Remaining: PHP {option.remaining_php.toFixed(2)}</p>
-                      <button
-                        onClick={() => {
-                          setDetailError("");
-                          void api<Recipe>(
-                            `/recipes/${encodeURIComponent(option.recipe_id)}`,
-                          )
-                            .then((recipe) => onDetails(recipe, option))
-                            .catch(() =>
-                              setDetailError(
-                                "Could not load the recipe. Try again when the backend is available.",
-                              ),
-                            );
-                        }}
-                      >
-                        {t("details")}
-                      </button>
+                      {message.localPlan?.basic_food &&
+                        option.items_to_buy.map((item) => (
+                          <p key={item.ingredient_id}>
+                            {item.name}: {item.quantity} {item.unit} · PHP{" "}
+                            {item.cost_php.toFixed(2)}
+                          </p>
+                        ))}
+                      {!message.localPlan?.basic_food && (
+                        <button
+                          onClick={() => {
+                            setDetailError("");
+                            void api<Recipe>(
+                              `/recipes/${encodeURIComponent(option.recipe_id)}`,
+                            )
+                              .then((recipe) => onDetails(recipe, option))
+                              .catch(() =>
+                                setDetailError(
+                                  "Could not load the recipe. Try again when the backend is available.",
+                                ),
+                              );
+                          }}
+                        >
+                          {t("details")}
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
