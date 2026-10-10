@@ -1,4 +1,5 @@
 import type { State } from "./state";
+import { allergyTerms } from "./allergies";
 export type Purchase = {
   ingredient_id: string;
   name: string;
@@ -129,12 +130,12 @@ export async function generatePlan(
       },
     ];
   });
-  const excluded = (interpretation?.excluded_ingredients ?? []).map((name) => {
-    const ingredient = findIngredient(ingredients, name);
-    if (!ingredient)
-      throw new Error(`Please clarify the excluded ingredient: ${name}.`);
-    return ingredient.ingredient_id;
-  });
+  const excluded = [
+    ...new Set([
+      ...allergyTerms(state.allergies),
+      ...(interpretation?.excluded_ingredients ?? []),
+    ]),
+  ];
   const plan = await api<Plan>(
     "/plans/generate",
     {

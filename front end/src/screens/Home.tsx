@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   Menu,
   Wallet,
@@ -20,6 +21,7 @@ export default function Home({
   onHouseholdChange,
   onChat,
   chatOpen,
+  chatContent,
 }: {
   state: State;
   t: T;
@@ -28,6 +30,7 @@ export default function Home({
   money: (n: number) => string;
   onChat: () => void;
   chatOpen: boolean;
+  chatContent: ReactNode;
   onHouseholdChange: (field: "people" | "days", value: number) => void;
 }) {
   return (
@@ -48,11 +51,25 @@ export default function Home({
           <h1>{t("greeting")}</h1>
           <p>{t("ready")}</p>
         </div>
-        <button className="greeting-mascot" aria-label={t("chat")} aria-expanded={chatOpen} aria-controls="mascot-chat" onClick={onChat}>
-          <BrandImage kind="mascot" />
-        </button>
+        <BrandImage kind="mascot" className="welcome-kasya" />
       </section>
       <main className="screen-content home-content">
+        <div className="home-assistant">
+          <button
+            className="kasya-assistant-bar"
+            aria-label={t("chat")}
+            aria-expanded={chatOpen}
+            aria-controls="mascot-chat"
+            onClick={onChat}
+          >
+            <span className="kasya-avatar">
+              <BrandImage kind="mascot" />
+            </span>
+            <span>{t("assistantGreeting")}</span>
+            <ChevronRight size={19} className={chatOpen ? "expanded" : ""} />
+          </button>
+          {chatContent}
+        </div>
         <button className="budget-card" onClick={() => navigate("budget")}>
           <span className="wallet-icon">
             <Wallet size={37} />
@@ -67,8 +84,18 @@ export default function Home({
           <label className="stat-card">
             <Users aria-hidden="true" />
             <span>
-              <select aria-label={t("household")} value={state.people} onChange={e => onHouseholdChange("people", Number(e.target.value))}>
-                {Array.from({ length: 20 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
+              <select
+                aria-label={t("household")}
+                value={state.people}
+                onChange={(e) =>
+                  onHouseholdChange("people", Number(e.target.value))
+                }
+              >
+                {Array.from({ length: 20 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
               </select>
               {t("people")}
             </span>
@@ -76,8 +103,18 @@ export default function Home({
           <label className="stat-card days-card">
             <CalendarDays aria-hidden="true" />
             <span>
-              <select aria-label={t("planningDays")} value={state.days} onChange={e => onHouseholdChange("days", Number(e.target.value))}>
-                {Array.from({ length: 30 }, (_, i) => <option key={i + 1} value={i + 1}>{i + 1}</option>)}
+              <select
+                aria-label={t("planningDays")}
+                value={state.days}
+                onChange={(e) =>
+                  onHouseholdChange("days", Number(e.target.value))
+                }
+              >
+                {Array.from({ length: 30 }, (_, i) => (
+                  <option key={i + 1} value={i + 1}>
+                    {i + 1}
+                  </option>
+                ))}
               </select>
               {t("days")}
             </span>

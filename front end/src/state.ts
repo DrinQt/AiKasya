@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 import {
+  emptyAllergies,
+  readAllergies,
+  type AllergyPreferences,
+} from "./allergies";
+import {
   groceries,
   pantry,
   type GroceryItem,
@@ -12,6 +17,7 @@ export type State = {
   budget: number;
   people: number;
   days: number;
+  allergies: AllergyPreferences;
   groceries: GroceryItem[];
   pantry: PantryItem[];
   messages: Message[];
@@ -22,6 +28,7 @@ export const initialState: State = {
   budget: 500,
   people: 3,
   days: 3,
+  allergies: emptyAllergies(),
   groceries,
   pantry,
   messages: [{ id: "hello", role: "assistant", key: "chatHello" }],
@@ -37,8 +44,12 @@ function readState(): State {
       ...saved,
       language: saved.language === "fil" ? "fil" : "en",
       started: saved.started === true,
+      allergies: readAllergies(saved.allergies),
       budget:
-        typeof saved.budget === "number" && Number.isFinite(saved.budget) && saved.budget > 0 && saved.budget <= 10000000
+        typeof saved.budget === "number" &&
+        Number.isFinite(saved.budget) &&
+        saved.budget > 0 &&
+        saved.budget <= 10000000
           ? saved.budget
           : 500,
       people:

@@ -94,9 +94,9 @@ test("Meal planner uses household inputs and opens recipe details", async ({
   await page.getByRole("button", { name: "Get Started" }).click();
   await page.getByRole("button", { name: "₱500 My Budget" }).click();
   await page.getByLabel("Food budget (₱)").fill("300");
-  await page.getByLabel("Household size").fill("2");
-  await page.getByLabel("Number of days").fill("2");
-  await page.getByRole("button", { name: "Save Budget" }).click();
+  await page.getByRole("spinbutton", { name: "Household size", exact: true }).fill("2");
+  await page.getByRole("spinbutton", { name: "Number of days", exact: true }).fill("2");
+  await page.getByRole("button", { name: "Save Preferences" }).click();
   await page.getByRole("button", { name: "Plan My Meals" }).click();
   await expect(page.getByText("₱295", { exact: true })).toBeVisible();
   await expect(page.getByText("Within budget!")).toBeVisible();
@@ -150,9 +150,9 @@ test("Dashboard budget inputs update and persist", async ({ page }) => {
   await page.getByRole("button", { name: "Get Started" }).click();
   await page.getByRole("button", { name: "₱500 My Budget" }).click();
   await page.getByLabel("Food budget (₱)").fill("300");
-  await page.getByLabel("Household size").fill("2");
-  await page.getByLabel("Number of days").fill("2");
-  await page.getByRole("button", { name: "Save Budget" }).click();
+  await page.getByRole("spinbutton", { name: "Household size", exact: true }).fill("2");
+  await page.getByRole("spinbutton", { name: "Number of days", exact: true }).fill("2");
+  await page.getByRole("button", { name: "Save Preferences" }).click();
   await expect(
     page.getByRole("button", { name: "₱300 My Budget" }),
   ).toBeVisible();
@@ -185,9 +185,7 @@ test("Welcome and dashboard fit narrow mobile through desktop", async ({
   }
 });
 
-test("Floating mascot opens chat without leaving the page and restores focus", async ({
-  page,
-}) => {
+test("Home assistant bar expands chat inline and restores focus", async ({ page }) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Get Started" }).click();
   await expect(
@@ -195,7 +193,7 @@ test("Floating mascot opens chat without leaving the page and restores focus", a
   ).toHaveCount(0);
   const launcher = page.getByRole("button", { name: "AI Chat", exact: true });
   await launcher.click();
-  const chat = page.getByRole("dialog", { name: "AI Chat" });
+  const chat = page.getByRole("region", { name: "AI Chat" });
   await expect(chat).toBeVisible();
   await expect(chat.getByRole("textbox")).toBeFocused();
   await expect(page).toHaveURL(/#home$/);

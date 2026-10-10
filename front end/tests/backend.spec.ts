@@ -184,8 +184,10 @@ test("Chat gives a concise budget shortfall and a working budget suggestion", as
   await mockBackend(page);
   await page.getByRole("button", { name: "₱500 My Budget" }).click();
   await page.getByLabel("Food budget (₱)").fill("100");
-  await page.getByLabel("Number of days").fill("1");
-  await page.getByRole("button", { name: "Save Budget" }).click();
+  await page
+    .getByRole("spinbutton", { name: "Number of days", exact: true })
+    .fill("1");
+  await page.getByRole("button", { name: "Save Preferences" }).click();
   await page.route("**/api/agent/interpret", (route) =>
     route.fulfill({
       json: {
@@ -292,22 +294,37 @@ for (const prompt of ["2000 budget, 3 days", "2000"]) {
     await mockBackend(page);
     await page.route("**/api/plans/generate", (route) => {
       const budget = route.request().postDataJSON().budget_php;
-      return route.fulfill({ json: {
-        ...plan, budget_php: budget,
-        options: [{ ...option, remaining_php: budget - option.estimated_total_php }],
-      } });
+      return route.fulfill({
+        json: {
+          ...plan,
+          budget_php: budget,
+          options: [
+            { ...option, remaining_php: budget - option.estimated_total_php },
+          ],
+        },
+      });
     });
     await page.getByRole("button", { name: "AI Chat", exact: true }).click();
     await page.getByRole("textbox").fill(prompt);
-    const request = page.waitForRequest(r => r.url().endsWith("/api/plans/generate"));
+    const request = page.waitForRequest((r) =>
+      r.url().endsWith("/api/plans/generate"),
+    );
     await page.getByRole("button", { name: "Send message" }).click();
     expect((await request).postDataJSON().budget_php).toBe(2000);
-    await expect(page.getByText(/Your total budget is ₱2,000.00/)).toBeVisible();
+    await expect(
+      page.getByText(/Your total budget is ₱2,000.00/),
+    ).toBeVisible();
     await expect(page.getByText("Remaining: PHP 1958.00")).toBeVisible();
     await page.getByRole("button", { name: "Close chat" }).click();
-    await expect(page.getByRole("button", { name: "₱2,000 My Budget" })).toBeVisible();
-    await expect(page.getByRole("combobox", { name: "Number of days" })).toHaveValue("3");
+    await expect(
+      page.getByRole("button", { name: "₱2,000 My Budget" }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("combobox", { name: "Number of days" }),
+    ).toHaveValue("3");
     await page.reload();
-    await expect(page.getByRole("button", { name: "₱2,000 My Budget" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "₱2,000 My Budget" }),
+    ).toBeVisible();
   });
 }

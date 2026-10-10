@@ -1,6 +1,7 @@
 import { CalendarDays, Pencil, ChevronRight, ShoppingCart } from "lucide-react";
 import { Button, BudgetStatus, type T } from "../components";
 import type { State } from "../state";
+import { copy } from "../plannerUI";
 import { recipes } from "../data";
 export function planCost(people: number, days: number) {
   return Array.from(
@@ -24,8 +25,26 @@ export default function MealPlanner({
   onAdd: () => void;
 }) {
   const cost = planCost(state.people, state.days);
+  const label = (en: string, fil: string) => copy(state.language, en, fil);
   return (
     <main className="screen-content meal-content">
+      <section className="planner-hero">
+        <span className="eyebrow">
+          {label("A PLAN FOR EVERY PESO", "PLANO PARA SA BAWAT PISO")}
+        </span>
+        <h2>
+          {label(
+            "Good meals. Happy budget.",
+            "Masarap na pagkain. Sulit na badyet.",
+          )}
+        </h2>
+        <p>
+          {label(
+            "Sample recipes - Prices are estimates, not confirmed expenses.",
+            "Halimbawang mga recipe - Tantiya ang presyo, hindi kumpirmadong gastos.",
+          )}
+        </p>
+      </section>
       <button className="plan-banner" onClick={onSetup}>
         <CalendarDays />
         <span>
@@ -62,6 +81,22 @@ export default function MealPlanner({
                       .split(" + ")
                       .join("\n+ ")}
                   </small>
+                  <span className="meal-meta">
+                    {state.people} {label("servings", "hain")} &middot;{" "}
+                    {t("estimated")}: {money((recipe.cost * state.people) / 2)}
+                  </span>
+                  <span className="ingredient-match">
+                    {
+                      recipe.ingredientIds.filter((id) =>
+                        state.pantry.some((item) => item.id === id),
+                      ).length
+                    }
+                    /{recipe.ingredientIds.length}{" "}
+                    {label(
+                      "listed ingredients in pantry",
+                      "nakalistang sangkap sa pantry",
+                    )}
+                  </span>
                 </span>
                 <ChevronRight size={21} />
               </button>
@@ -69,9 +104,27 @@ export default function MealPlanner({
           );
         })}
       </div>
-      <div className="cost-card">
+      <div className={`cost-card ${cost > state.budget ? "cost-over" : ""}`}>
         <h3>{t("estimated")}</h3>
         <strong>{money(cost)}</strong>
+        <div className="cost-breakdown">
+          <p>
+            {state.days} {t("days")} &times; {state.people}{" "}
+            {label("servings", "hain")}
+          </p>
+          <p>
+            {label("Daily average", "Karaniwang gastos bawat araw")}
+            <b>{money(cost / state.days)}</b>
+          </p>
+          <p>
+            {t("budget")}
+            <b>{money(state.budget)}</b>
+          </p>
+          <p>
+            {t("remaining")}
+            <b>{money(state.budget - cost)}</b>
+          </p>
+        </div>
         <BudgetStatus within={cost <= state.budget} t={t} />
       </div>
       <Button onClick={onAdd}>

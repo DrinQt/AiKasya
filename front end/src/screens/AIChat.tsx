@@ -21,7 +21,9 @@ export default function AIChat({
   setState,
   t,
   onDetails,
+  embedded = false,
 }: {
+  embedded?: boolean;
   state: State;
   setState: Dispatch<SetStateAction<State>>;
   t: T;
@@ -35,7 +37,8 @@ export default function AIChat({
   const input = useRef<HTMLInputElement>(null);
   useEffect(() => {
     input.current?.focus();
-  }, []);
+    if (embedded) input.current?.scrollIntoView({ block: "nearest" });
+  }, [embedded]);
   const [detailError, setDetailError] = useState("");
   const [pending, setPending] = useState(false);
   const send = async (prompt = draft, constraints?: Interpretation) => {
@@ -150,8 +153,9 @@ export default function AIChat({
         : s,
     );
   };
+  const Container = embedded ? "div" : "main";
   return (
-    <main className="chat-screen">
+    <Container className="chat-screen">
       <p className="demo-label">
         {state.language === "fil"
           ? "Kaagapay sa badyet sa pagkain"
@@ -336,6 +340,6 @@ export default function AIChat({
           <Send />
         </button>
       </form>
-    </main>
+    </Container>
   );
 }
