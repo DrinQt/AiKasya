@@ -1,6 +1,6 @@
 # AIKasya — Frontend (Progressive Web App)
 
-> **"Kasya sa budget. Swak sa hapag!"**  
+> **"Bawat Piso. May Plano!"**  
 > Built for **AppBuildersPH Hackathon 2026** — Theme: **Local AI**
 
 The AIKasya frontend is an offline-first food budgeting and meal planning app built with React, Vite, TypeScript, and Tailwind CSS. It talks to the local FastAPI backend and on-device Ollama model on the same laptop. It turns a budget, household size, planning days, pantry, and allergies into daily meal schedules, meal options, and shopping lists.
