@@ -1,4 +1,4 @@
-# AiKasya
+# AiKasya - Bawat Piso. May Plano!
 
 AiKasya's repository keeps frontend and backend work separate.
 
