@@ -1,3 +1,4 @@
+import { clearInitialPlan } from "./helpers/plannerChat";
 import { test, expect } from "@playwright/test";
 
 test("Saved allergies and chat exclusions reach the local planner together", async ({
@@ -38,12 +39,18 @@ test("Saved allergies and chat exclusions reach the local planner together", asy
     r.url().endsWith("/api/plans/generate"),
   );
   await page.getByRole("button", { name: "Plan My Meals" }).click();
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+
   expect((await mealRequest).postDataJSON().excluded_ingredient_ids).toEqual([
     "peanut",
     "egg",
   ]);
   await page.goto("/#home");
-  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
   await page.getByRole("textbox").fill("Plan dinner without fish");
   const chatRequest = page.waitForRequest((r) =>
     r.url().endsWith("/api/plans/generate"),
@@ -77,7 +84,10 @@ test("Allergy resolution failures do not show an unfiltered sample plan", async 
   await page.getByRole("button", { name: "Add custom allergen" }).click();
   await page.getByRole("button", { name: "Save Preferences" }).click();
   await page.getByRole("button", { name: "Plan My Meals" }).click();
-  await expect(page.getByRole("status")).toContainText("Please clarify");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+
+  await expect(page.getByText(/Please clarify these allergies/)).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Add to Grocery List" }),
   ).toHaveCount(0);

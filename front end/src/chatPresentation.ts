@@ -14,6 +14,33 @@ export function planReply(plan: Plan, language: "en" | "fil") {
       currency: "PHP",
       maximumFractionDigits: 2,
     }).format(value);
+  if (plan.schedule?.length) {
+    const skips = plan.schedule
+      .flatMap((day) => day.meals)
+      .filter((meal) => meal.skipped).length;
+    const summary =
+      language === "fil"
+        ? `${plan.schedule.length} araw, may almusal, tanghalian at hapunan. Kabuuang badyet: ${money(plan.budget_php)}. Planong gastos: ${money(plan.total_spent_php ?? 0)}. Natitira: ${money(plan.remaining_total_php ?? 0)}.`
+        : `${plan.schedule.length} days with breakfast, lunch and dinner. Total budget: ${money(plan.budget_php)}. Planned purchases: ${money(plan.total_spent_php ?? 0)}. Remaining: ${money(plan.remaining_total_php ?? 0)}.`;
+    return (
+      summary +
+      (skips
+        ? language === "fil"
+          ? ` ${skips} pagkain ang nilaktawan; walang bawas sa badyet para rito.`
+          : ` ${skips} requested meals skipped with no budget deduction.`
+        : "") +
+      (plan.status !== "feasible"
+        ? ` ${plan.reason_if_no_match ?? "Some meals could not be scheduled."}`
+        : "")
+    );
+  }
+  if (plan.shopping_list)
+    return plan.options.length
+      ? language === "fil"
+        ? `Ito ang isang listahan ng mabibili sa kabuuang ${money(plan.budget_php)}. Batay ito sa naka-save na presyo at pinakamaliit na dami ng pagbili. Kumpirmahin ang presyo at laki ng pakete sa tindahan. Listahan ito ng mga item, hindi recipe o buong menu.`
+        : `Here is one shopping list within your total ${money(plan.budget_php)}. Planned purchases: ${money(plan.options[0].estimated_total_php)}. Remaining: ${money(plan.options[0].remaining_php)}. Quantities use saved prices and purchase increments. General lists aim to use the budget closely; named quantities stay fixed. Confirm prices and package sizes at the shop.`
+      : (plan.reason_if_no_match ??
+          "No items fit the amount with the saved prices.");
   if (plan.options.length)
     if (plan.basic_food)
       return language === "fil"
@@ -21,8 +48,8 @@ export function planReply(plan: Plan, language: "en" | "fil") {
         : `You can buy basic ingredients within ${money(plan.budget_php)} for one meal. Choose one option below. These need water, cooking equipment and fuel, which are not included in the cost. Estimates use saved prices; confirm at the shop. This is not a full day's menu. Without cooking access, ask a nearby eatery for rice and a dish within your budget; I don't have confirmed ready-to-eat prices.`;
     else
       return language === "fil"
-        ? `Ang kabuuang badyet mo ay ${money(plan.budget_php)}. Pumili ng isang pagkain sa mga opsyon sa ibaba; hindi ito buong menu para sa isang araw.`
-        : `Your total budget is ${money(plan.budget_php)}. Choose one meal from the options below; these are alternatives for one meal, not a full daily menu.`;
+        ? `Pasok sa ${money(plan.budget_php)} ang mga opsyong ito para sa isang pagkain. Pumili ng isa; hindi ito buong menu para sa isang araw.`
+        : `These meal options fit ${money(plan.budget_php)}. Choose one meal from the options below; these are alternatives for one meal, not a full daily menu.`;
   const closest = closestMeal(plan);
   if (plan.basic_food && !plan.options.length)
     return language === "fil"
@@ -32,6 +59,7 @@ export function planReply(plan: Plan, language: "en" | "fil") {
     return language === "fil"
       ? `Kulang ang ${money(plan.budget_php)}. ${closest.name}: ${money(closest.cost)}. Magdagdag ng ${money(closest.cost - plan.budget_php)}.`
       : `No recipe in this library fits ${money(plan.budget_php)}. ${closest.name} costs ${money(closest.cost)}—add ${money(closest.cost - plan.budget_php)}, or try basic food within your budget.`;
+  if (plan.reason_if_no_match) return plan.reason_if_no_match;
   return language === "fil"
     ? "Walang tugmang pagkain. Subukang dagdagan ang badyet o bawasan ang tao."
     : "No meal matches. Try a higher budget or fewer people.";

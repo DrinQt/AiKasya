@@ -1,19 +1,25 @@
 import { MascotTip } from "../components";
 import { categories, categoryOf, copy } from "../plannerUI";
 import type { CSSProperties } from "react";
+import { useState } from "react";
 import type { T } from "../components";
 import type { State } from "../state";
+import PlanConclusion from "../components/PlanConclusion";
 export default function Insights({
   state,
   t,
   money,
+  onReset,
 }: {
   state: State;
   t: T;
   money: (n: number) => string;
+  onReset: () => void;
 }) {
+  const [resetNotice, setResetNotice] = useState(false);
   const spending = state.groceries
     .filter((x) => x.checked)
+    .filter((x) => !state.insightsExcludedGroceryIds.includes(x.id))
     .reduce((a, b) => a + b.price, 0);
   const ratio = Math.min(
     100,
@@ -21,7 +27,9 @@ export default function Insights({
   );
   const bars = [52, 42, 74, 26, 55, 80, 32];
   const label = (en: string, fil: string) => copy(state.language, en, fil);
-  const checked = state.groceries.filter((x) => x.checked);
+  const checked = state.groceries.filter(
+    (x) => x.checked && !state.insightsExcludedGroceryIds.includes(x.id),
+  );
   return (
     <main className="screen-content insights-content">
       <section className="planner-hero">
@@ -33,11 +41,61 @@ export default function Insights({
         </h2>
         <p>
           {label(
-            "Based on checked grocery items and their saved prices. These may still be estimates.",
+            "Based on items checked since the last Insights reset and their saved prices. These may still be estimates.",
             "Batay sa mga nabiling item at naka-save na presyo. Maaaring tantiya pa rin ang mga ito.",
           )}
         </p>
       </section>
+      <button
+        type="button"
+        className="secondary-button"
+        onClick={() => {
+          onReset();
+          setResetNotice(true);
+        }}
+      >
+        {label("Reset insights", "I-reset ang Insights")}
+      </button>
+      {resetNotice && (
+        <p role="status">
+          {label(
+            "Insights reset. New purchases will start a new tracking period.",
+            "Na-reset ang Insights. Bagong tala ang mga susunod na pagbili.",
+          )}
+        </p>
+      )}
+      <p className="subtext">
+        {label(
+          "Reset clears plan conclusions and starts a new grocery tracking period. Your grocery items stay saved.",
+          "Binubura ng reset ang mga buod at nagsisimula ng bagong tala ng pagbili. Mananatili ang grocery list.",
+        )}
+      </p>
+      {(["meal_plan", "shopping_list"] as const).map((feature) => {
+        const insight = state.planInsights[feature];
+        return insight ? (
+          <PlanConclusion
+            key={feature}
+            insight={insight}
+            language={state.language}
+            title={
+              feature === "meal_plan"
+                ? label("Latest meal plan", "Pinakabagong plano ng pagkain")
+                : label("Latest shopping list", "Pinakabagong listahan")
+            }
+            label={
+              feature === "meal_plan"
+                ? "Latest meal plan insights"
+                : "Latest shopping list insights"
+            }
+          />
+        ) : null;
+      })}
+      <p className="subtext">
+        {label(
+          "Plan conclusions are estimates, separate from checked grocery totals. Each feature shows its latest plan; drafts are not added together as spending.",
+          "Tantiya ang mga buod ng plano at hiwalay sa mga nabiling grocery. Pinakabagong plano lang ang ipinapakita bawat feature.",
+        )}
+      </p>
       <section className="insight-panel">
         <h2>{label("Checked-item total", "Kabuuan ng mga nabiling item")}</h2>
         <div className="spending-overview">

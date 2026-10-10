@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { readPlanInsights, type PlanInsight } from "./planInsights";
 import {
   emptyAllergies,
   readAllergies,
@@ -11,7 +12,10 @@ import {
   type PantryItem,
   type Message,
 } from "./data";
+export const householdLimits = { people: 20, days: 30 } as const;
 export type State = {
+  insightsExcludedGroceryIds: string[];
+  planInsights: Partial<Record<PlanInsight["feature"], PlanInsight>>;
   language: "en" | "fil";
   started: boolean;
   budget: number;
@@ -23,6 +27,8 @@ export type State = {
   messages: Message[];
 };
 export const initialState: State = {
+  insightsExcludedGroceryIds: [],
+  planInsights: {},
   language: "en",
   started: false,
   budget: 500,
@@ -42,6 +48,8 @@ function readState(): State {
     return {
       ...initialState,
       ...saved,
+      planInsights: readPlanInsights(saved.planInsights),
+      insightsExcludedGroceryIds: Array.isArray(saved.insightsExcludedGroceryIds) ? saved.insightsExcludedGroceryIds.filter((id) => typeof id === "string") : [],
       language: saved.language === "fil" ? "fil" : "en",
       started: saved.started === true,
       allergies: readAllergies(saved.allergies),
@@ -55,11 +63,13 @@ function readState(): State {
       people:
         Number.isInteger(saved.people) &&
         saved.people! >= 1 &&
-        saved.people! <= 20
+        saved.people! <= householdLimits.people
           ? saved.people!
           : 3,
       days:
-        Number.isInteger(saved.days) && saved.days! >= 1 && saved.days! <= 30
+        Number.isInteger(saved.days) &&
+        saved.days! >= 1 &&
+        saved.days! <= householdLimits.days
           ? saved.days!
           : 3,
       groceries:

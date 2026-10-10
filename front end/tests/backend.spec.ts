@@ -1,3 +1,5 @@
+import { clearInitialPlan } from "./helpers/plannerChat";
+import { chooseNumber } from "./helpers/numberSheet";
 import { test, expect, type Page } from "@playwright/test";
 const ingredients = [
   {
@@ -95,10 +97,14 @@ test("Local planner uses household constraints, opens real instructions, and add
     request.url().endsWith("/api/plans/generate"),
   );
   await page.getByRole("button", { name: "Plan My Meals" }).click();
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+
   const body = (await request).postDataJSON();
-  expect(body.budget_php).toBeCloseTo(500 / 3);
+  expect(body.budget_php).toBe(500);
   expect(body.servings).toBe(3);
-  expect(body.meal_scope).toBe("single_meal");
+  expect(body.meal_scope).toBe("day");
+  expect(body.days).toBe(3);
   await expect(page.getByRole("heading", { name: "Egg meal" })).toBeVisible();
   await page.getByRole("button", { name: "View Details" }).click();
   await expect(page.getByText("Cook the eggs.")).toBeVisible();
@@ -112,7 +118,10 @@ test("Chat uses shared settings rather than unrelated interpretation defaults", 
   page,
 }) => {
   await mockBackend(page);
-  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
   const request = page.waitForRequest((request) =>
     request.url().endsWith("/api/plans/generate"),
   );
@@ -139,6 +148,9 @@ test("No-match response remains a no-match rather than showing sample meals", as
     }),
   );
   await page.getByRole("button", { name: "Plan My Meals" }).click();
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+
   await expect(page.getByText("No meal fits this budget.")).toBeVisible();
   await expect(page.getByRole("button", { name: /Adobo/ })).toHaveCount(0);
 });
@@ -164,6 +176,9 @@ test("Pantry loads backend stock and grocery prices are normalized with their ac
     .getByRole("navigation")
     .getByRole("button", { name: "Meals", exact: true })
     .click();
+
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
   await page.getByRole("button", { name: "Add to Grocery List" }).click();
   const price = page.waitForRequest((request) =>
     request.url().endsWith("/api/prices/upsert"),
@@ -178,15 +193,13 @@ test("Pantry loads backend stock and grocery prices are normalized with their ac
   });
 });
 
-test("Chat gives a concise budget shortfall and a working budget suggestion", async ({
+test("Chat offers shopping within the fixed budget after a recipe shortfall", async ({
   page,
 }) => {
   await mockBackend(page);
-  await page.getByRole("button", { name: "₱500 My Budget" }).click();
+  await page.goto("/#budget");
   await page.getByLabel("Food budget (₱)").fill("100");
-  await page
-    .getByRole("spinbutton", { name: "Number of days", exact: true })
-    .fill("1");
+  await chooseNumber(page, "Number of days", "1");
   await page.getByRole("button", { name: "Save Preferences" }).click();
   await page.route("**/api/agent/interpret", (route) =>
     route.fulfill({
@@ -221,7 +234,11 @@ test("Chat gives a concise budget shortfall and a working budget suggestion", as
       headers: { "Access-Control-Allow-Origin": "*" },
     });
   });
-  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
+  attempts = 0;
   await page.getByRole("textbox").fill("100 pesos for 3 people");
   await page.getByRole("button", { name: "Send message" }).click();
   await expect(page.getByText(/Tortang Talong costs.*add/)).toBeVisible();
@@ -229,29 +246,28 @@ test("Chat gives a concise budget shortfall and a working budget suggestion", as
   const request = page.waitForRequest((request) =>
     request.url().endsWith("/api/plans/generate"),
   );
-  await page.getByRole("button", { name: "Use PHP 107 budget" }).click();
+  await page
+    .getByRole("button", { name: "Basic food within my budget" })
+    .click();
   expect((await request).postDataJSON()).toMatchObject({
-    budget_php: 107,
+    budget_php: 100,
     servings: 3,
   });
   await expect(page.getByRole("heading", { name: "Egg meal" })).toBeVisible();
-  await page.getByRole("button", { name: "Close chat" }).click();
-  await expect(
-    page.getByRole("button", { name: "₱107 My Budget" }),
-  ).toBeVisible();
+  await page.goto("/#home");
+  await expect(page.locator(".budget-card input")).toBeVisible();
 });
 
 test("Updated Home people and days are used in the next chat request", async ({
   page,
 }) => {
   await mockBackend(page);
-  await page
-    .getByRole("combobox", { name: "Household size" })
-    .selectOption("2");
-  await page
-    .getByRole("combobox", { name: "Number of days" })
-    .selectOption("2");
-  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await chooseNumber(page, "Household size", "2");
+  await chooseNumber(page, "Number of days", "2");
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
   await page.getByRole("textbox").fill("Plan dinner");
   const request = page.waitForRequest((request) =>
     request.url().endsWith("/api/plans/generate"),
@@ -262,11 +278,79 @@ test("Updated Home people and days are used in the next chat request", async ({
     servings: 2,
   });
 });
-test("Typed budget and days update Home before calculating chat meals", async ({
+test("Hypothetical budget uses a temporary scenario and keeps saved settings", async ({
   page,
 }) => {
   await mockBackend(page);
-  await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+  await page.route("**/api/agent/interpret", (route) =>
+    route.fulfill({
+      json: {
+        intent: "plan_meal",
+        budget_php: 300,
+        servings: 99,
+        scenario_budget_php: route
+          .request()
+          .postDataJSON()
+          .message.includes("what if")
+          ? 300
+          : null,
+        meal_type: "dinner",
+        excluded_ingredients: [],
+        max_prep_minutes: null,
+        clarification_question: null,
+        confidence_note: "Test parser",
+      },
+    }),
+  );
+  await page.route("**/api/plans/generate", (route) =>
+    route.fulfill({
+      json: {
+        ...plan,
+        budget_php: route.request().postDataJSON().budget_php,
+      },
+    }),
+  );
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
+  await page.getByRole("textbox").fill("what if my budget is 300");
+  const scenario = page.waitForRequest((req) =>
+    req.url().endsWith("/api/plans/generate"),
+  );
+  await page.getByRole("button", { name: "Send message" }).click();
+  expect((await scenario).postDataJSON()).toMatchObject({
+    budget_php: 300,
+    servings: 3,
+  });
+  await expect(
+    page.getByText(/For a hypothetical ₱300 total budget/),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/Your saved Home budget remains ₱500/),
+  ).toBeVisible();
+  await page.getByRole("textbox").fill("Dinner please");
+  const normal = page.waitForRequest((req) =>
+    req.url().endsWith("/api/plans/generate"),
+  );
+  await page.getByRole("button", { name: "Send message" }).click();
+  expect((await normal).postDataJSON()).toMatchObject({
+    budget_php: 500,
+    servings: 3,
+  });
+  await page.goto("/#home");
+  await page.reload();
+  await expect(page.locator(".budget-card input")).toHaveValue("500");
+});
+
+test("Typed budget and days cannot override the Home settings", async ({
+  page,
+}) => {
+  await mockBackend(page);
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
   await page.getByRole("textbox").fill("500 budget 1 day");
   const request = page.waitForRequest((request) =>
     request.url().endsWith("/api/plans/generate"),
@@ -277,20 +361,22 @@ test("Typed budget and days update Home before calculating chat meals", async ({
     servings: 3,
   });
   await expect(
-    page.getByText("PHP 500 per day", { exact: false }),
+    page.getByText("Total budget across 3 days", { exact: false }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Close chat" }).click();
+  await page.goto("/#home");
   await expect(
-    page.getByRole("combobox", { name: "Number of days" }),
-  ).toHaveValue("1");
+    page.getByRole("button", { name: /^Number of days:/ }),
+  ).toHaveAttribute("data-value", "3");
   await page.reload();
   await expect(
-    page.getByRole("combobox", { name: "Number of days" }),
-  ).toHaveValue("1");
+    page.getByRole("button", { name: /^Number of days:/ }),
+  ).toHaveAttribute("data-value", "3");
 });
 
 for (const prompt of ["2000 budget, 3 days", "2000"]) {
-  test(`Chat keeps the full entered budget: ${prompt}`, async ({ page }) => {
+  test(`Chat keeps the fixed Home budget despite: ${prompt}`, async ({
+    page,
+  }) => {
     await mockBackend(page);
     await page.route("**/api/plans/generate", (route) => {
       const budget = route.request().postDataJSON().budget_php;
@@ -304,27 +390,26 @@ for (const prompt of ["2000 budget, 3 days", "2000"]) {
         },
       });
     });
-    await page.getByRole("button", { name: "AI Chat", exact: true }).click();
+    await page.goto("/#meals");
+    await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+    await page.getByRole("button", { name: "Continue with Kasya" }).click();
+    await clearInitialPlan(page);
     await page.getByRole("textbox").fill(prompt);
     const request = page.waitForRequest((r) =>
       r.url().endsWith("/api/plans/generate"),
     );
     await page.getByRole("button", { name: "Send message" }).click();
-    expect((await request).postDataJSON().budget_php).toBe(2000);
+    expect((await request).postDataJSON().budget_php).toBe(500);
     await expect(
-      page.getByText(/Your total budget is ₱2,000.00/),
+      page.getByText(/Choose one meal|Your total budget/),
     ).toBeVisible();
-    await expect(page.getByText("Remaining: PHP 1958.00")).toBeVisible();
-    await page.getByRole("button", { name: "Close chat" }).click();
+    await expect(page.getByText("Remaining: PHP 458.00")).toBeVisible();
+    await page.goto("/#home");
+    await expect(page.locator(".budget-card input")).toBeVisible();
     await expect(
-      page.getByRole("button", { name: "₱2,000 My Budget" }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("combobox", { name: "Number of days" }),
-    ).toHaveValue("3");
+      page.getByRole("button", { name: /^Number of days:/ }),
+    ).toHaveAttribute("data-value", "3");
     await page.reload();
-    await expect(
-      page.getByRole("button", { name: "₱2,000 My Budget" }),
-    ).toBeVisible();
+    await expect(page.locator(".budget-card input")).toBeVisible();
   });
 }

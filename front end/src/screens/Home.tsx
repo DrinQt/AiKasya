@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
+import { useState } from "react";
 import {
   Menu,
   Wallet,
-  ChevronRight,
+  ChevronDown,
   Users,
   CalendarDays,
   Sparkles,
@@ -11,28 +11,24 @@ import {
   ChartNoAxesColumnIncreasing,
 } from "lucide-react";
 import { BrandImage, Button, Status, type T, type Screen } from "../components";
-import type { State } from "../state";
+import { householdLimits, type State } from "../state";
+import NumberSheet from "../components/NumberSheet";
 export default function Home({
   state,
   t,
   navigate,
   online,
-  money,
+  onPlan,
   onHouseholdChange,
-  onChat,
-  chatOpen,
-  chatContent,
 }: {
   state: State;
   t: T;
   navigate: (screen: Screen) => void;
   online: boolean;
-  money: (n: number) => string;
-  onChat: () => void;
-  chatOpen: boolean;
-  chatContent: ReactNode;
+  onPlan: (budget: number) => void;
   onHouseholdChange: (field: "people" | "days", value: number) => void;
 }) {
+  const [budget, setBudget] = useState(String(state.budget));
   return (
     <>
       <header className="home-header">
@@ -51,79 +47,95 @@ export default function Home({
           <h1>{t("greeting")}</h1>
           <p>{t("ready")}</p>
         </div>
-        <BrandImage kind="mascot" className="welcome-kasya" />
+        <button
+          type="button"
+          className="mascot-chat-button"
+          aria-label={
+            state.language === "fil"
+              ? "Makipag-chat kay Kasya"
+              : "Chat with Kasya"
+          }
+          onClick={() => navigate("chat")}
+        >
+          <BrandImage kind="mascot" className="welcome-kasya" />
+        </button>
       </section>
       <main className="screen-content home-content">
-        <div className="home-assistant">
-          <button
-            className="kasya-assistant-bar"
-            aria-label={t("chat")}
-            aria-expanded={chatOpen}
-            aria-controls="mascot-chat"
-            onClick={onChat}
-          >
-            <span className="kasya-avatar">
-              <BrandImage kind="mascot" />
+        <form
+          className="home-planning-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            onPlan(Number(budget));
+          }}
+        >
+          <label className="budget-card">
+            <span className="wallet-icon">
+              <Wallet size={37} />
             </span>
-            <span>{t("assistantGreeting")}</span>
-            <ChevronRight size={19} className={chatOpen ? "expanded" : ""} />
-          </button>
-          {chatContent}
-        </div>
-        <button className="budget-card" onClick={() => navigate("budget")}>
-          <span className="wallet-icon">
-            <Wallet size={37} />
-          </span>
-          <span>
-            <strong>{money(state.budget)}</strong>
-            <span>{t("budget")}</span>
-          </span>
-          <ChevronRight />
-        </button>
-        <div className="household-grid">
-          <label className="stat-card">
-            <Users aria-hidden="true" />
             <span>
-              <select
-                aria-label={t("household")}
-                value={state.people}
-                onChange={(e) =>
-                  onHouseholdChange("people", Number(e.target.value))
-                }
-              >
-                {Array.from({ length: 20 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-              {t("people")}
+              <span>{t("budget")}</span>
+              <input
+                aria-label={t("amount")}
+                type="number"
+                inputMode="decimal"
+                required
+                min="0.01"
+                max="10000000"
+                step="0.01"
+                value={budget}
+                onChange={(e) => setBudget(e.target.value)}
+              />
             </span>
           </label>
-          <label className="stat-card days-card">
-            <CalendarDays aria-hidden="true" />
-            <span>
-              <select
-                aria-label={t("planningDays")}
-                value={state.days}
-                onChange={(e) =>
-                  onHouseholdChange("days", Number(e.target.value))
-                }
-              >
-                {Array.from({ length: 30 }, (_, i) => (
-                  <option key={i + 1} value={i + 1}>
-                    {i + 1}
-                  </option>
-                ))}
-              </select>
-              {t("days")}
-            </span>
-          </label>
-        </div>
-        <Button onClick={() => navigate("meals")}>
-          <Sparkles className="yellow" />
-          {t("plan")}
-        </Button>
+          <div className="household-grid">
+            <NumberSheet
+              value={state.people}
+              min={1}
+              max={householdLimits.people}
+              label={t("household")}
+              title={
+                state.language === "fil" ? "Ilang tao?" : "How many people?"
+              }
+              t={t}
+              className="stat-card"
+              onConfirm={(value) => onHouseholdChange("people", value)}
+            >
+              <Users aria-hidden="true" />
+              <span>
+                <strong className="stat-value">
+                  {state.people}
+                  <ChevronDown size={15} aria-hidden="true" />
+                </strong>
+                {t("people")}
+              </span>
+            </NumberSheet>
+            <NumberSheet
+              value={state.days}
+              min={1}
+              max={householdLimits.days}
+              label={t("planningDays")}
+              title={
+                state.language === "fil" ? "Ilang araw?" : "How many days?"
+              }
+              t={t}
+              className="stat-card days-card"
+              onConfirm={(value) => onHouseholdChange("days", value)}
+            >
+              <CalendarDays aria-hidden="true" />
+              <span>
+                <strong className="stat-value">
+                  {state.days}
+                  <ChevronDown size={15} aria-hidden="true" />
+                </strong>
+                {t("days")}
+              </span>
+            </NumberSheet>
+          </div>
+          <Button type="submit">
+            <Sparkles className="yellow" />
+            {t("plan")}
+          </Button>
+        </form>
         <div className="quick-actions">
           {(
             [

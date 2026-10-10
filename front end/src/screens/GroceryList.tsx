@@ -59,6 +59,26 @@ export default function GroceryList({
           <span style={{ width: `${progress}%` }} />
         </div>
       </section>
+      <button
+        type="button"
+        className="secondary-button"
+        disabled={!state.groceries.length || syncing}
+        onClick={() => {
+          setState((s) => ({
+            ...s,
+            groceries: [],
+            insightsExcludedGroceryIds: [],
+          }));
+          setSyncNotice(
+            label(
+              "Grocery list cleared. Your budget and pantry stay saved.",
+              "Na-clear ang grocery list. Naka-save pa rin ang badyet at pantry.",
+            ),
+          );
+        }}
+      >
+        {label("Reset grocery list", "I-reset ang grocery list")}
+      </button>
       <div className="grocery-tip">
         <BrandImage kind="mascot" className="context-mascot" />
 
@@ -92,6 +112,10 @@ export default function GroceryList({
                       onChange={(e) =>
                         setState((s) => ({
                           ...s,
+                          insightsExcludedGroceryIds:
+                            s.insightsExcludedGroceryIds.filter(
+                              (id) => id !== item.id,
+                            ),
                           groceries: s.groceries.map((x) =>
                             x.id === item.id
                               ? { ...x, checked: e.target.checked }
@@ -138,6 +162,26 @@ export default function GroceryList({
                   ) : (
                     <strong>{money(item.price)}</strong>
                   )}
+                  <button
+                    type="button"
+                    className="grocery-remove"
+                    aria-label={`Remove ${item.name}`}
+                    disabled={syncing}
+                    onClick={() =>
+                      setState((s) => ({
+                        ...s,
+                        groceries: s.groceries.filter(
+                          (entry) => entry.id !== item.id,
+                        ),
+                        insightsExcludedGroceryIds:
+                          s.insightsExcludedGroceryIds.filter(
+                            (id) => id !== item.id,
+                          ),
+                      }))
+                    }
+                  >
+                    {label("Remove", "Alisin")}
+                  </button>
                 </div>
               ))}
             </section>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Wallet,
+  ChevronDown,
   Users,
   CalendarDays,
   Minus,
@@ -8,14 +9,17 @@ import {
   Lightbulb,
 } from "lucide-react";
 import { BrandImage, Button, type T } from "../components";
-import type { State } from "../state";
+import { householdLimits, type State } from "../state";
+import NumberSheet from "../components/NumberSheet";
 import type { AllergyPreferences } from "../allergies";
 import FoodAllergies from "../components/FoodAllergies";
 export default function BudgetSetup({
   state,
   t,
   onSave,
+  onHouseholdChange,
 }: {
+  onHouseholdChange: (field: "people" | "days", value: number) => void;
   state: State;
   t: T;
   onSave: (
@@ -26,8 +30,10 @@ export default function BudgetSetup({
   ) => void;
 }) {
   const [budget, setBudget] = useState(String(state.budget));
-  const [people, setPeople] = useState(String(state.people));
-  const [days, setDays] = useState(String(state.days));
+  const people = String(state.people);
+  const days = String(state.days);
+  const setPeople = (value: string) => onHouseholdChange("people", Number(value));
+  const setDays = (value: string) => onHouseholdChange("days", Number(value));
   const [error, setError] = useState(false);
   const [allergies, setAllergies] = useState(state.allergies);
   const [allergyError, setAllergyError] = useState(false);
@@ -46,10 +52,10 @@ export default function BudgetSetup({
             b > 10000000 ||
             !Number.isInteger(p) ||
             p < 1 ||
-            p > 20 ||
+            p > householdLimits.people ||
             !Number.isInteger(d) ||
             d < 1 ||
-            d > 30
+            d > householdLimits.days
           ) {
             setError(true);
             return;
@@ -117,7 +123,7 @@ export default function BudgetSetup({
               id: "people",
               value: people,
               setter: setPeople,
-              max: 20,
+              max: householdLimits.people,
               title: t("household"),
               Icon: Users,
             },
@@ -125,28 +131,38 @@ export default function BudgetSetup({
               id: "days",
               value: days,
               setter: setDays,
-              max: 30,
+              max: householdLimits.days,
               title: t("planningDays"),
               Icon: CalendarDays,
             },
           ].map(({ id, value, setter, max, title, Icon }) => (
             <section className="budget-stepper-card" key={id}>
               <Icon size={25} aria-hidden="true" />
-              <label htmlFor={`budget-${id}`}>{title}</label>
-              <input
-                id={`budget-${id}`}
-                aria-label={title}
-                type="number"
-                inputMode="numeric"
-                min="1"
+              <span className="budget-number-label">{title}</span>
+              <NumberSheet
+                value={Number(value)}
+                min={1}
                 max={max}
-                required
-                value={value}
-                onChange={(e) => {
-                  setter(e.target.value);
+                label={title}
+                title={
+                  id === "people"
+                    ? state.language === "fil"
+                      ? "Ilang tao?"
+                      : "How many people?"
+                    : state.language === "fil"
+                      ? "Ilang araw?"
+                      : "How many days?"
+                }
+                t={t}
+                className="budget-number-trigger"
+                onConfirm={(next) => {
+                  setter(String(next));
                   setError(false);
                 }}
-              />
+              >
+                {value}
+                <ChevronDown size={16} aria-hidden="true" />
+              </NumberSheet>
               <div className="stepper-buttons">
                 <button
                   type="button"

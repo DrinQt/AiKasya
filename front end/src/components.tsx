@@ -3,7 +3,6 @@ import {
   ChevronLeft,
   Home,
   Utensils,
-
   Settings,
   WifiOff,
   Check,
@@ -58,7 +57,11 @@ export function BrandImage({
   ) : (
     <img
       className={className}
-      src={`/assets/aikasya-${kind}.png`}
+      src={
+        kind === "logo"
+          ? "/assets/aikasya-logo-transparent.png"
+          : "/assets/aikasya-mascot-transparent.png"
+      }
       alt={
         kind === "logo"
           ? "AiKasya — Bawat Piso, May Plano."
@@ -168,7 +171,15 @@ export function Status({ online, t }: { online: boolean; t: T }) {
     </span>
   );
 }
-export function PlanSummary({ t, onDetails, language }: { t: T; onDetails: () => void; language:'en'|'fil' }) {
+export function PlanSummary({
+  t,
+  onDetails,
+  language,
+}: {
+  t: T;
+  onDetails: () => void;
+  language: "en" | "fil";
+}) {
   return (
     <div className="plan-summary">
       <h3>
@@ -178,14 +189,11 @@ export function PlanSummary({ t, onDetails, language }: { t: T; onDetails: () =>
         <strong>{t("day")} 1</strong>
         <span>
           Adobo +{" "}
-          {language === "fil"
-            ? "Sinangag + Gulay"
-            : "Garlic rice + Vegetables"}
+          {language === "fil" ? "Sinangag + Gulay" : "Garlic rice + Vegetables"}
         </span>
         <strong>{t("day")} 2</strong>
         <span>
-          Monggo +{" "}
-          {language === "fil" ? "Itlog + Gulay" : "Egg + Vegetables"}
+          Monggo + {language === "fil" ? "Itlog + Gulay" : "Egg + Vegetables"}
         </span>
       </div>
       <button onClick={onDetails}>

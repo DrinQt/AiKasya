@@ -1,20 +1,14 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { Trash2, X } from "lucide-react";
-import {
-  BrandImage,
-  BottomNav,
-  Header,
-  type Screen,
-  type T,
-} from "./components";
+import { useEffect, useState, type ReactNode } from "react";
+import { Trash2 } from "lucide-react";
+import { BottomNav, Header, type Screen, type T } from "./components";
 import { en, fil, type TranslationKey } from "./i18n";
 import { useAppState } from "./state";
 import { groceries, recipes } from "./data";
 import Welcome from "./screens/Welcome";
 import Home from "./screens/Home";
 import BudgetSetup from "./screens/BudgetSetup";
+import PlannerStart from "./screens/PlannerStart";
 import AIChat from "./screens/AIChat";
-import ConnectedMeals from "./screens/ConnectedMeals";
 import ConnectedRecipe from "./screens/ConnectedRecipe";
 import type { MealOption, Recipe } from "./api";
 import RecipeDetails from "./screens/RecipeDetails";
@@ -59,8 +53,10 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>(() =>
     currentScreen(state.started),
   );
-  const [chatOpen, setChatOpen] = useState(false);
-  const chatLauncher = useRef<HTMLButtonElement>(null);
+  const [planReady, setPlanReady] = useState(false);
+  const [planningIntent, setPlanningIntent] = useState<
+    "plan_meal" | "buy_food"
+  >("plan_meal");
   const [online, setOnline] = useState(navigator.onLine);
   const [backendRecipe, setBackendRecipe] = useState<{
     recipe: Recipe;
@@ -90,7 +86,9 @@ export default function App() {
   }, [state.language]);
   useEffect(() => {
     const update = () => {
-      setScreen(currentScreen(state.started));
+      const next = currentScreen(state.started);
+      setScreen(next);
+      if (next === "chat" || next === "meals") setPlanReady(false);
       window.scrollTo({ top: 0 });
     };
     window.addEventListener("hashchange", update);
@@ -102,25 +100,12 @@ export default function App() {
     return () => window.clearTimeout(timer);
   }, [notice]);
   const navigate = (next: Screen) => {
-    setChatOpen(false);
+    if (next === "meals") setPlanReady(false);
+
     window.location.hash = next;
     setScreen(next);
     window.scrollTo({ top: 0 });
   };
-  useEffect(() => {
-    if (!chatOpen) return;
-    const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setChatOpen(false);
-        (
-          chatLauncher.current ??
-          document.querySelector<HTMLButtonElement>(".kasya-assistant-bar")
-        )?.focus();
-      }
-    };
-    window.addEventListener("keydown", close);
-    return () => window.removeEventListener("keydown", close);
-  }, [chatOpen]);
   const addIngredients = (ids: string[]) => {
     setState((s) => ({
       ...s,
@@ -161,64 +146,6 @@ export default function App() {
     setNotice("added");
     navigate("grocery");
   };
-  const addPlan = () =>
-    addIngredients([
-      ...new Set(
-        Array.from(
-          { length: state.days },
-          (_, i) => recipes[i % recipes.length].ingredientIds,
-        ).flat(),
-      ),
-    ]);
-
-  const renderChat = (inline: boolean) => (
-    <section
-      className={inline ? "inline-chat" : "floating-chat"}
-      role={inline ? "region" : "dialog"}
-      aria-label={t("chat")}
-      id="mascot-chat"
-    >
-      <header className="floating-chat-header">
-        <BrandImage kind="mascot" />
-        <h2>{t("chat")}</h2>
-        <button
-          className="icon-button"
-          aria-label={t("clearChat")}
-          onClick={() => setState((s) => ({ ...s, messages: [] }))}
-        >
-          <Trash2 size={18} />
-        </button>
-        <button
-          className="icon-button"
-          aria-label={
-            state.language === "fil" ? "Isara ang chat" : "Close chat"
-          }
-          onClick={() => {
-            setChatOpen(false);
-            (
-              chatLauncher.current ??
-              document.querySelector<HTMLButtonElement>(".kasya-assistant-bar")
-            )?.focus();
-          }}
-        >
-          <X size={20} />
-        </button>
-      </header>
-      <AIChat
-        embedded={inline}
-        state={state}
-        setState={setState}
-        t={t}
-        onDetails={(recipe, option) => {
-          if (recipe && option) {
-            setBackendRecipe({ recipe, option });
-            navigate("recipe");
-          } else navigate("meals");
-        }}
-      />
-    </section>
-  );
-
   let content: ReactNode;
   switch (screen) {
     case "welcome":
@@ -237,15 +164,21 @@ export default function App() {
         <Home
           state={state}
           t={t}
-          onChat={() => setChatOpen((open) => !open)}
-          chatOpen={chatOpen}
-          chatContent={chatOpen ? renderChat(true) : null}
           onHouseholdChange={(field, value) =>
             setState((s) => ({ ...s, [field]: value }))
           }
           online={online}
-          money={money}
           navigate={navigate}
+          onPlan={(budget) => {
+            setState((s) => ({
+              ...s,
+              budget,
+              messages: s.messages.filter(
+                (message) => message.context === "chat",
+              ),
+            }));
+            navigate("meals");
+          }}
         />
       );
       break;
@@ -254,6 +187,9 @@ export default function App() {
         <BudgetSetup
           state={state}
           t={t}
+          onHouseholdChange={(field, value) =>
+            setState((s) => ({ ...s, [field]: value }))
+          }
           onSave={(budget, people, days, allergies) => {
             setState((s) => ({ ...s, budget, people, days, allergies }));
             navigate("home");
@@ -262,38 +198,65 @@ export default function App() {
       );
       break;
     case "chat":
-      content = (
-        <AIChat
-          state={state}
-          setState={setState}
-          t={t}
-          onDetails={(recipe, option) => {
-            if (recipe && option) {
-              setBackendRecipe({ recipe, option });
-              navigate("recipe");
-            } else navigate("meals");
-          }}
-        />
-      );
-      break;
     case "meals":
-      content = (
-        <ConnectedMeals
+      content = planReady ? (
+        <>
+          {screen === "meals" && (
+            <div className="screen-content planning-toolbar">
+              <button
+                className="secondary-button"
+                onClick={() => navigate("home")}
+              >
+                {state.language === "fil"
+                  ? "Baguhin ang mga detalye"
+                  : "Edit planning details"}
+              </button>
+            </div>
+          )}
+          <AIChat
+            state={state}
+            setState={setState}
+            t={t}
+            planningMode={screen === "meals"}
+            autoStart={screen === "meals"}
+            initialIntent={planningIntent}
+            onAdd={addBackendGroceries}
+            onDetails={(recipe, option) => {
+              if (recipe && option) {
+                setBackendRecipe({ recipe, option });
+                navigate("recipe");
+              }
+            }}
+          />
+        </>
+      ) : (
+        <PlannerStart
+          freeChat={screen === "chat"}
           state={state}
           t={t}
-          money={money}
-          onSetup={() => navigate("budget")}
-          onRecipe={(recipe, option) => {
-            setBackendRecipe(recipe.steps ? { recipe, option } : null);
-            setRecipeId(recipe.recipe_id);
-            navigate("recipe");
-          }}
-          onAdd={addBackendGroceries}
-          onSampleAdd={addPlan}
-          onSampleRecipe={(id) => {
-            setBackendRecipe(null);
-            setRecipeId(id);
-            navigate("recipe");
+          onEdit={() => navigate("home")}
+          onContinue={(allergies, intent) => {
+            setState((s) => ({
+              ...s,
+              allergies,
+              messages:
+                screen === "meals" ||
+                (s.messages
+                  .filter((message) => message.context === "chat")
+                  .reverse()
+                  .find((message) => message.planRequest)?.planRequest
+                  ?.intent ===
+                  "buy_food") !==
+                  (intent === "buy_food")
+                  ? s.messages.filter(
+                      (message) =>
+                        (message.context ?? "home") !==
+                        (screen === "meals" ? "home" : "chat"),
+                    )
+                  : s.messages,
+            }));
+            setPlanningIntent(intent);
+            setPlanReady(true);
           }}
         />
       );
@@ -344,7 +307,14 @@ export default function App() {
       );
       break;
     case "insights":
-      content = <Insights state={state} t={t} money={money} />;
+      content = (
+        <Insights
+          state={state}
+          t={t}
+          money={money}
+          onReset={() => setState((s) => ({ ...s, planInsights: {}, insightsExcludedGroceryIds: s.groceries.filter((item) => item.checked).map((item) => item.id) }))}
+        />
+      );
       break;
     case "more":
       content = (
@@ -390,33 +360,28 @@ export default function App() {
           }
           t={t}
           action={
-            screen === "chat" ? (
+            (screen === "chat" || screen === "meals") && planReady ? (
               <button
                 className="icon-button"
                 aria-label={t("clearChat")}
-                onClick={() => setState((s) => ({ ...s, messages: [] }))}
+                onClick={() =>
+                  setState((s) => ({
+                    ...s,
+                    messages: s.messages.filter(
+                      (message) =>
+                        (message.context ?? "home") !==
+                        (screen === "meals" ? "home" : "chat"),
+                    ),
+                  }))
+                }
               >
                 <Trash2 size={21} />
               </button>
-            ) : (
-              <button
-                ref={chatLauncher}
-                className="header-chat-button"
-                aria-label={t("chat")}
-                aria-expanded={chatOpen}
-                aria-controls="mascot-chat"
-                onClick={() => setChatOpen((open) => !open)}
-              >
-                <BrandImage kind="mascot" />
-              </button>
-            )
+            ) : undefined
           }
         />
       )}
       {content}
-      {screen !== "welcome" && screen !== "chat" && screen !== "home" && (
-        <>{chatOpen && renderChat(false)}</>
-      )}
       {notice && (
         <div className="toast" role="status">
           {t(notice)}

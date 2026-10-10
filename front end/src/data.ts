@@ -14,6 +14,8 @@ export type PantryItem = {
   emoji: string;
 };
 export type Message = {
+  context?: "chat" | "home";
+  recipe?: import("./api").Recipe;
   id: string;
   role: "assistant" | "user";
   text?: string;

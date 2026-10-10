@@ -54,7 +54,7 @@ export const en = {
   pantryCheck: "Pantry Check",
   myMeals: "My Meals",
   back: "Back",
-  ask: "Ask me anything…",
+  ask: "Describe a meal or food preference…",
   send: "Send message",
   clearChat: "Clear chat",
   chatHello: "Hi! 😊 What would you like to plan today?",
@@ -112,6 +112,7 @@ export const en = {
     "Use your browser menu to install or add AiKasya to your home screen.",
   confirmClear: "Clear all saved budget, grocery, pantry, and chat data?",
   cancel: "Cancel",
+  closeSelector: "Close selection",
   reset: "Clear saved data",
   helpText:
     "Set your budget, choose a meal plan, then check your pantry before shopping. Your changes are saved on this device.",
@@ -206,7 +207,7 @@ export const fil: Record<TranslationKey, string> = {
   pantryCheck: "Mga Sangkap",
   myMeals: "Aking Pagkain",
   back: "Bumalik",
-  ask: "Magtanong dito…",
+  ask: "Sabihin ang gusto mong pagkain o sangkap…",
   send: "Ipadala ang mensahe",
   clearChat: "Burahin ang usapan",
   chatHello: "Hi! 😊 Ano ang gusto mong planuhin ngayon?",
@@ -266,6 +267,7 @@ export const fil: Record<TranslationKey, string> = {
   confirmClear:
     "Burahin ang lahat ng naka-save na badyet, bilihin, sangkap, at usapan?",
   cancel: "Kanselahin",
+  closeSelector: "Isara ang pagpili",
   reset: "Burahin ang naka-save na data",
   helpText:
     "Itakda ang badyet, pumili ng meal plan, at tingnan muna ang mga sangkap bago mamili. Naka-save ang mga pagbabago sa device na ito.",

@@ -10,6 +10,7 @@ export type Purchase = {
   price_observed_at: string;
 };
 export type MealOption = {
+  steps?: string[];
   recipe_id: string;
   recipe_name: string;
   servings: number;
@@ -22,13 +23,44 @@ export type MealOption = {
   warnings: string[];
 };
 export type Plan = {
+  meal_alternatives?: MealAlternative[];
+  removed_cost_php?: number;
+  schedule?: ScheduledDay[];
+  total_spent_php?: number;
+  remaining_total_php?: number;
+  shopping_list?: boolean;
   basic_food?: boolean;
   status: string;
   budget_php: number;
   options: MealOption[];
   reason_if_no_match: string | null;
 };
+export type ScheduledDay = {
+  extra_groceries?: MealOption | null;
+  day: number;
+  allocated_php: number;
+  spent_php: number;
+  remaining_php: number;
+  meals: {
+    skipped?: boolean;
+    meal_type: "breakfast" | "lunch" | "dinner";
+    option: MealOption | null;
+    cost_php: number;
+    remaining_day_php: number;
+    remaining_total_php: number;
+    reason: string | null;
+  }[];
+};
 export type Interpretation = {
+  meal_choices?: MealSelection[];
+  skipped_meals?: {
+    day: number;
+    meal_type: "breakfast" | "lunch" | "dinner";
+  }[];
+  budget_basis?: "total" | "per_day";
+  days?: number | null;
+  scenario_budget_php?: number | null;
+  shopping_items?: { term: string; quantity: number; unit?: string }[];
   pantry_empty?: boolean;
   intent: string;
   budget_php: number | null;
@@ -39,6 +71,33 @@ export type Interpretation = {
   clarification_question: string | null;
   confidence_note: string;
 };
+export type LocalAIStatus = { ready: boolean; message: string };
+export type MealSelection = {
+  day: number;
+  meal_type: "breakfast" | "lunch" | "dinner";
+  recipe_id: string;
+};
+export type MealAlternative = {
+  recipe_id: string;
+  recipe_name: string;
+  cost_php: number;
+  plan: Plan;
+  meal_choices: MealSelection[];
+};
+let startupRequest: Promise<LocalAIStatus> | undefined;
+export function startLocalAI(): Promise<LocalAIStatus> {
+  if (!startupRequest) {
+    startupRequest = api<LocalAIStatus>(
+      "/agent/start",
+      {},
+      undefined,
+      75000,
+    ).finally(() => {
+      startupRequest = undefined;
+    });
+  }
+  return startupRequest;
+}
 export type Ingredient = {
   ingredient_id: string;
   canonical_name: string;
@@ -70,8 +129,9 @@ export async function api<T>(
   path: string,
   body?: unknown,
   signal?: AbortSignal,
+  timeoutMs = 15000,
 ): Promise<T> {
-  const timeout = AbortSignal.timeout(15000);
+  const timeout = AbortSignal.timeout(timeoutMs);
   const response = await fetch(`${base}/api${path}`, {
     method: body === undefined ? "GET" : "POST",
     headers:
@@ -102,6 +162,11 @@ export async function generatePlan(
   budget = state.budget / state.days,
   interpretation?: Interpretation,
   signal?: AbortSignal,
+  alternative?: {
+    target_day: number;
+    target_meal_type: "breakfast" | "lunch" | "dinner";
+    exclude_recipe_id: string;
+  },
 ): Promise<{ plan: Plan; warnings: string[] }> {
   const ingredients = await api<Ingredient[]>(
     "/ingredients",
@@ -139,18 +204,27 @@ export async function generatePlan(
     ]),
   ];
   const plan = await api<Plan>(
-    "/plans/generate",
+    alternative ? "/plans/alternatives" : "/plans/generate",
     {
       budget_php: budget,
       servings: interpretation?.servings ?? state.people,
-      meal_scope: "single_meal",
+      meal_scope:
+        interpretation?.intent === "plan_meal" ? "day" : "single_meal",
+      days: state.days,
+      budget_basis: interpretation?.budget_basis ?? "total",
+      skipped_meals: interpretation?.skipped_meals ?? [],
+      meal_choices: interpretation?.meal_choices ?? [],
+      ...alternative,
       meal_type: interpretation?.meal_type ?? "dinner",
       pantry,
       excluded_ingredient_ids: excluded,
       max_prep_minutes: interpretation?.max_prep_minutes ?? null,
       basic_food: interpretation?.intent === "buy_food",
+      shopping_list: interpretation?.intent === "buy_food",
+      shopping_items: interpretation?.shopping_items ?? [],
     },
     signal,
+    alternative ? 45000 : 15000,
   );
   return { plan, warnings };
 }

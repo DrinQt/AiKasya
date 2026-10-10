@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from app.models.schemas import HealthResponse
-from app.local_ai.client import check_ollama_status
+from app.local_ai.client import check_ollama_status, DEFAULT_MODEL
 
 router = APIRouter(prefix="/api", tags=["health"])
 
@@ -8,7 +8,7 @@ router = APIRouter(prefix="/api", tags=["health"])
 @router.get("/health", response_model=HealthResponse)
 async def get_health():
     ai_status = await check_ollama_status()
-    is_ready = ai_status.get("running", False)
+    is_ready = ai_status.get("running", False) and DEFAULT_MODEL in ai_status.get("models", [])
     active_model = ai_status.get("active_model", "Local Engine")
 
     return HealthResponse(

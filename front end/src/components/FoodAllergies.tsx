@@ -11,7 +11,9 @@ export default function FoodAllergies({
   value,
   onChange,
   t,
+  title,
 }: {
+  title?: string;
   value: AllergyPreferences;
   onChange: (value: AllergyPreferences) => void;
   t: T;
@@ -49,7 +51,7 @@ export default function FoodAllergies({
       <div className="allergy-heading">
         <ShieldCheck size={25} aria-hidden="true" />
         <div>
-          <h2 id="allergy-title">{t("foodAllergies")}</h2>
+          <h2 id="allergy-title">{title ?? t("foodAllergies")}</h2>
           <p>{t("allergySubtitle")}</p>
         </div>
       </div>

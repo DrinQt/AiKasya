@@ -1,3 +1,4 @@
+import { clearInitialPlan } from "./helpers/plannerChat";
 import { test, expect } from "@playwright/test";
 
 test("Food shopping follow-ups keep the budget and remove claimed pantry stock", async ({
@@ -67,9 +68,15 @@ test("Food shopping follow-ups keep the budget and remove claimed pantry stock",
       },
     });
   });
-  await page.goto("/#chat");
+  await page.goto("/#meals");
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
+  requests.length = 0;
   await page.evaluate(() => {
     const state = JSON.parse(localStorage.getItem("aikasya.v1")!);
+    state.budget = 100;
+    state.days = 1;
     state.pantry = [
       {
         id: "rice",
@@ -82,6 +89,10 @@ test("Food shopping follow-ups keep the budget and remove claimed pantry stock",
     localStorage.setItem("aikasya.v1", JSON.stringify(state));
   });
   await page.reload();
+  await page.getByRole("radio", { name: "Meal plan", exact: true }).check();
+  await page.getByRole("button", { name: "Continue with Kasya" }).click();
+  await clearInitialPlan(page);
+  requests.length = 0;
   for (const message of [
     "100 budget ko para sa isang araw",
     "if theres no recipe, what food can i buy for 100 pesos so i can eat",

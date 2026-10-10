@@ -1773,6 +1773,74 @@ input:focus-visible {
   background: #edf2e7;
   box-shadow: none;
 }
+.grocery-row {
+  flex-wrap: wrap;
+}
+.grocery-remove {
+  margin-left: auto;
+  padding: 8px 12px;
+  min-height: 40px;
+  border: 1px solid var(--planner-border);
+  border-radius: 12px;
+  background: var(--cream, #fffef9);
+  color: #17633d;
+}
+.shopping-plan-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--planner-border);
+  padding: 8px 0;
+}
+.shopping-plan-item p {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  margin: 0;
+}
+.shopping-plan-item button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 12px;
+}
+.meal-alternatives {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+.meal-alternatives button {
+  padding: 12px;
+  border-radius: 14px;
+  background: #edf2e7;
+  color: #17633d;
+  border: 1px solid var(--planner-border);
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.mascot-chat-button {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: transform 160ms ease;
+}
+.mascot-chat-button:hover {
+  transform: translateY(-2px);
+}
+.mascot-chat-button:focus-visible {
+  outline: 3px solid #17633d;
+  outline-offset: 4px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mascot-chat-button {
+    transition: none;
+  }
+}
 .grocery-check {
   flex: 1;
   min-height: 44px;
@@ -2655,7 +2723,7 @@ input:focus-visible {
   margin: 15px 0 0;
   min-width: 0;
 }
-.budget-form .allergy-chip {
+.allergy-card .allergy-chip {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -2674,12 +2742,12 @@ input:focus-visible {
     border-color 180ms ease;
   max-width: 100%;
 }
-.budget-form .allergy-chip:has(input:checked) {
+.allergy-card .allergy-chip:has(input:checked) {
   border-color: #17633d;
   background: #dcefd5;
   color: #17633d;
 }
-.budget-form .allergy-chip input {
+.allergy-card .allergy-chip input {
   width: 17px;
   height: 17px;
   flex-shrink: 0;
@@ -2710,7 +2778,7 @@ input:focus-visible {
   gap: 8px;
   margin-top: 8px;
 }
-.budget-form .custom-allergy-input input {
+.allergy-card .custom-allergy-input input {
   min-width: 0;
   flex: 1;
   padding: 10px 12px;
@@ -2772,9 +2840,633 @@ input:focus-visible {
   white-space: nowrap;
 }
 @media (prefers-reduced-motion: reduce) {
-  .budget-form .allergy-chip {
+  .allergy-card .allergy-chip {
     transition: none;
   }
 }
 
-.backend-actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.backend-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.home-planning-form {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+.home-planning-form .budget-card input {
+  width: 100%;
+  min-width: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: transparent;
+  color: inherit;
+}
+.home-planning-form .budget-card > span:last-child {
+  flex: 1;
+  min-width: 0;
+}
+.home-allergies summary {
+  cursor: pointer;
+  padding: 12px;
+  font-weight: 700;
+}
+.planning-kind {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+.planning-kind select {
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  border-radius: 12px;
+}
+.planning-purpose {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d6dfd6;
+  border-radius: 16px;
+  min-width: 0;
+}
+.planning-purpose legend {
+  font-weight: 800;
+}
+.planning-purpose label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.planning-purpose input {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+.planning-summary {
+  font-weight: 800;
+}
+.planner-start .context-mascot {
+  display: block;
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+.planning-toolbar {
+  padding-top: 16px;
+  padding-bottom: 12px;
+}
+.chat-screen {
+  height: auto;
+  min-height: 0;
+  padding: 0 16px 16px;
+  gap: 16px;
+}
+.chat-context {
+  padding: 16px;
+  border: 1px solid #e5e7d7;
+  border-radius: 18px;
+  background: #f3f7ec;
+}
+.chat-context-values {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 12px;
+}
+.chat-context-values span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.chat-context-values small {
+  color: #596554;
+  font-size: 12px;
+}
+.chat-context-values strong {
+  font-size: 16px;
+  overflow-wrap: anywhere;
+}
+.chat-context-note {
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #52604e;
+}
+.chat-screen .chat-messages {
+  flex: none;
+  overflow: visible;
+  padding: 0;
+  gap: 20px;
+}
+.chat-screen .message-body {
+  flex: 1;
+}
+.chat-screen .plan-summary {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  background: transparent;
+}
+.chat-screen .plan-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #f3f7ec;
+  border: 1px solid #dce6cf;
+  border-radius: 16px;
+}
+.chat-screen .plan-summary h3 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.4;
+}
+.chat-screen .plan-summary p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.chat-screen .plan-summary button {
+  padding: 12px;
+  min-height: 44px;
+  border: 1px solid #baceb2;
+  border-radius: 12px;
+  background: #fffefa;
+  color: #005c3b;
+  font-size: 13px;
+  font-weight: 700;
+}
+.chat-examples summary {
+  padding: 12px 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+  color: #005c3b;
+}
+.chat-screen .chat-prompts {
+  padding: 0;
+  gap: 8px;
+}
+.chat-screen .chat-composer {
+  position: sticky;
+  bottom: calc(88px + env(safe-area-inset-bottom));
+  z-index: 10;
+  padding: 12px 0;
+  flex-shrink: 0;
+}
+.chat-screen .chat-composer input {
+  border-radius: 14px;
+}
+@media (min-width: 600px) {
+  .chat-screen {
+    height: auto;
+  }
+}
+.chat-scroll-end {
+  scroll-margin-bottom: calc(180px + env(safe-area-inset-bottom));
+}
+
+/* Shared allergy controls in setup and the pre-chat questions. */
+.allergy-card {
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 18px #263d2c06;
+}
+.allergy-heading {
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.allergy-heading > svg {
+  flex-shrink: 0;
+  color: #17633d;
+}
+.allergy-heading h2 {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+.allergy-heading p {
+  margin-top: 6px;
+  line-height: 1.6;
+}
+.allergy-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+.allergy-card .allergy-chip {
+  min-height: 50px;
+  padding: 12px;
+  gap: 10px;
+  border-radius: 12px;
+  background: #fffefa;
+  font-size: 13px;
+  font-weight: 600;
+  overflow: visible;
+}
+.allergy-card .allergy-chip span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.allergy-card .allergy-chip input {
+  width: 18px;
+  height: 18px;
+}
+.allergy-card .allergy-chip:has(input:checked) {
+  background: #eaf4e6;
+  border-color: #17633d;
+  box-shadow: inset 0 0 0 1px #17633d;
+}
+.allergy-card .allergy-chip:has(input:focus-visible) {
+  outline: 3px solid #e7a522;
+  outline-offset: 3px;
+}
+.allergy-status {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+}
+.allergy-card .allergy-status .allergy-chip {
+  min-height: 48px;
+  background: #f6f7f1;
+}
+.allergy-card .allergy-status .allergy-chip:has(input:checked) {
+  background: #eaf4e6;
+}
+.allergy-scope {
+  margin-top: 16px;
+}
+.allergy-card .custom-allergy-input input {
+  width: 100%;
+  border: 1px solid #cbd7c0;
+  border-radius: 10px;
+  background: #fff;
+}
+@media (max-width: 350px) {
+  .allergy-card {
+    padding: 16px;
+  }
+  .allergy-card .allergy-chip {
+    padding: 10px 8px;
+    gap: 8px;
+  }
+}
+.stat-card .stat-value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--planner-forest);
+}
+.is-home .stat-card .stat-value svg {
+  width: 15px;
+  height: 15px;
+}
+.stat-card.days-card .stat-value {
+  color: #6261a1;
+}
+.budget-number-label {
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.4;
+}
+.budget-number-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 4px 12px;
+  min-height: 44px;
+  border: 1px solid var(--planner-border);
+  border-radius: 12px;
+  color: var(--planner-forest);
+  font-size: 28px;
+  font-weight: 800;
+}
+.number-sheet {
+  position: fixed;
+  inset: auto 0 0;
+  margin: 0 auto;
+  width: min(100%, 540px);
+  max-width: 100%;
+  max-height: min(80dvh, 680px);
+  padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+  overflow: hidden;
+  border: 1px solid var(--planner-border);
+  border-bottom: 0;
+  border-radius: 26px 26px 0 0;
+  background: var(--color-cream);
+  color: #19342a;
+  box-shadow: 0 -8px 40px #14332424;
+}
+.number-sheet[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: number-sheet-enter 180ms ease-out;
+}
+.number-sheet::backdrop {
+  background: #152a2359;
+  animation: number-backdrop-enter 180ms ease-out;
+}
+.number-sheet.is-closing {
+  animation: number-sheet-exit 180ms ease-in forwards;
+}
+.number-sheet.is-closing::backdrop {
+  animation: number-backdrop-exit 180ms ease-in forwards;
+}
+.number-sheet-handle {
+  width: 38px;
+  height: 4px;
+  flex-shrink: 0;
+  margin: 0 auto;
+  border-radius: 999px;
+  background: #d4daca;
+}
+.number-sheet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.number-sheet-header h2 {
+  font-size: 21px;
+  font-weight: 800;
+}
+.number-sheet-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px;
+  scrollbar-width: thin;
+}
+.number-sheet-options button {
+  position: relative;
+  min-height: 54px;
+  border: 1px solid var(--planner-border);
+  border-radius: 14px;
+  background: #fffefa;
+  color: #425344;
+  font-size: 20px;
+  font-weight: 700;
+}
+.number-sheet-options button[aria-checked="true"] {
+  border-color: var(--planner-forest);
+  background: var(--color-leaf);
+  color: var(--planner-forest);
+  box-shadow: inset 0 0 0 1px var(--planner-forest);
+}
+.number-sheet-options button svg {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+}
+.number-sheet-footer {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.number-sheet-footer button {
+  min-height: 48px;
+}
+@keyframes number-sheet-enter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes number-sheet-exit {
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes number-backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes number-backdrop-exit {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .number-sheet[open],
+  .number-sheet.is-closing,
+  .number-sheet::backdrop {
+    animation: none;
+  }
+}
+.chat-ai-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--planner-border);
+  border-radius: 16px;
+  background: var(--planner-cream);
+  color: var(--planner-forest);
+  font-size: 13px;
+}
+.chat-ai-status span {
+  flex: 1;
+}
+.chat-ai-status button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--planner-border);
+  border-radius: 12px;
+  font-weight: 700;
+}
+.meal-schedule {
+  display: grid;
+  gap: 16px;
+  margin-top: 14px;
+}
+.chat-features {
+  display: flex;
+  gap: 8px;
+}
+.chat-features button {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 10px;
+  border: 1px solid var(--planner-border);
+  border-radius: 16px;
+  color: var(--planner-forest);
+  background: var(--planner-cream);
+  font-weight: 800;
+}
+.chat-features button[aria-pressed="true"] {
+  background: var(--color-leaf);
+  border-color: var(--planner-forest);
+}
+.cooking-steps {
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid var(--planner-border);
+  border-radius: 14px;
+  background: var(--planner-cream);
+}
+.cooking-steps summary {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--planner-forest);
+  min-height: 32px;
+}
+.cooking-steps ol {
+  padding-left: 20px;
+  margin-top: 8px;
+  display: grid;
+  gap: 8px;
+}
+.meal-schedule > * {
+  min-width: 0;
+}
+.schedule-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 4px 2px 8px;
+  scrollbar-width: thin;
+}
+.schedule-tabs button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid var(--planner-border);
+  border-radius: 999px;
+  background: var(--planner-cream);
+  color: var(--planner-forest);
+  font-size: 14px;
+  font-weight: 800;
+}
+.schedule-tabs button[aria-selected="true"] {
+  background: var(--color-leaf);
+  border-color: var(--planner-forest);
+}
+.schedule-tabs button:focus-visible,
+.scheduled-day:focus-visible {
+  outline: 2px solid var(--planner-forest);
+  outline-offset: 2px;
+}
+.schedule-conclusion {
+  padding: 16px;
+  border: 1px solid var(--planner-border);
+  border-radius: 20px;
+  background: var(--color-leaf);
+  color: var(--planner-forest);
+}
+.schedule-conclusion h3 {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+.schedule-conclusion dl {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.schedule-conclusion dl > div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+}
+.schedule-conclusion dd {
+  margin: 0;
+  font-weight: 800;
+}
+.schedule-leftover {
+  border-top: 1px solid var(--planner-border);
+  padding-top: 10px;
+  font-size: 17px;
+}
+.scheduled-day {
+  border: 1px solid var(--planner-border);
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--color-cream);
+}
+.scheduled-day > header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 16px;
+  background: var(--color-leaf);
+  color: var(--planner-forest);
+}
+.scheduled-day h3 {
+  font-size: 19px;
+  font-weight: 800;
+}
+.scheduled-meal {
+  padding: 16px;
+  border-top: 1px solid var(--planner-border);
+}
+.scheduled-meal-heading {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  color: var(--planner-forest);
+}
+.scheduled-meal h4 {
+  font-weight: 800;
+}
+.scheduled-recipe {
+  margin-top: 8px;
+  font-weight: 700;
+}
+.scheduled-balance {
+  margin-top: 12px;
+  padding: 10px;
+  background: #eef5e8;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+.scheduled-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.scheduled-actions button {
+  flex: 1 1 calc(50% - 4px);
+  width: auto;
+  min-width: 0;
+  padding: 8px 12px;
+  min-height: 44px;
+  font-size: 13px;
+}
+.scheduled-day > footer {
+  padding: 14px 16px;
+  border-top: 1px solid var(--planner-border);
+  color: var(--planner-forest);
+  font-size: 13px;
+  font-weight: 700;
+}
