@@ -56,7 +56,7 @@
 
 ---
 
-**### E. AI Development Tools
+### E. AI Development Tools
 * **Claude (Anthropic), used by the Data Science lead:** finding and verifying official price sources (PSA/DA/DTI), extracting the PSA workbook by script, the Data Science dataset (ingredients, recipes, price provenance), the budget engine package (`backend/app/budget_engine`), data fixes in the backend (seed loading, price-update purchase step, meal_type filter), tests and documentation.
 * **Google Antigravity / Gemini, used by the Backend & Local AI lead:** project architecture, Section 9 REST contracts, Pydantic schemas, SQLite database query integration, Ollama local model runtime adapter, and automated QA test suites.**
 
